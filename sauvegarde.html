@@ -1,0 +1,3139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fengcai JI Portfolio</title>
+  <style>
+    html { scroll-behavior: smooth; }
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      background-color: #f5f5f0;
+      font-family: 'Courier New', monospace;
+      overflow-x: hidden;
+    }
+
+    /* ---------- 首页 (100vh) ---------- */
+    section#home {
+      position: relative;
+      height: 100vh; /* 视口高度 */
+      width: 100%;
+      overflow: hidden;
+    }
+
+    #grid-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* 导航栏 */
+    nav {
+      position: fixed;
+      top: 20px;
+      right: 40px;
+      display: flex;
+      gap: 30px;
+      font-size: 1.2rem;
+      z-index: 1000;
+    }
+    nav a { text-decoration: none; color: #333; font-weight: bold; transition: color .3s; }
+    nav a:hover { color: #666; }
+
+    /* 中心文字（相对于首页 section 布局） */
+    .hero-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
+      width: 100%;
+      max-width: 1100px;
+      box-sizing: border-box;
+      padding: 0 20px;
+    }
+    .hero-container h1 { font-size: 4rem; color: #333; margin: 0 0 20px 0; }
+    .hero-container h2 {
+      font-size: 2rem;
+      color: #555;
+      min-height: 2.5rem;
+      border-right: 2px solid #555;
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .hero-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      position: absolute;
+      top: -140px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%   { transform: translateX(-50%) translateY(0); }
+      50%  { transform: translateX(-50%) translateY(-15px); }
+      100% { transform: translateX(-50%) translateY(0); }
+    }
+
+    .hero-btn-container {
+      position: absolute;
+      top: 70%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .explore-btn {
+      pointer-events: all;
+      display: inline-block;
+      padding: 10px 15px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      background-color: #111;
+      color: #fff;
+      border: 2px solid #111;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color .25s, color .25s, transform .2s;
+    }
+    .explore-btn:hover { background-color: #fff; color: #111; transform: translateY(-3px); }
+    .explore-btn:focus { outline: none; }
+
+    /* 技能图片（可拖动） */
+    .skill-card { position: absolute; cursor: grab; z-index: 5; transition: transform .3s ease, box-shadow .3s ease; }
+    .skill-card img { width: 300px; height: auto; box-shadow: 0 4px 10px rgba(0,0,0,.2); transition: transform .3s ease, box-shadow .3s ease; }
+    .skill-card:hover img { transform: translateY(-10px); box-shadow: 0 12px 20px rgba(0,0,0,.3); }
+    .data-analyst { top: 20%; left: 15%; }
+    .data-engineer { bottom: 20%; left: 15%; }
+    .business-analyst { top: 35%; right: 10%; transform: translateY(-50%); }
+    .data-scientist { bottom: 3%; right: 30%; }
+
+    /* 3D 可视化 */
+    #visualization { position: absolute; bottom: 20px; right: 20px; width: 400px; height: 300px; z-index: 0; }
+
+    /* 演示轨迹及光标 */
+    svg { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 999; }
+    path { fill: none; stroke: url(#grad); stroke-width: 3; stroke-dasharray: 10 10; animation: dashmove 1s linear infinite; }
+    @keyframes dashmove { to { stroke-dashoffset: -20; } }
+    .cursor { position: absolute; width: 30px; height: 30px; background: #ffd84d; clip-path: polygon(0 0,100% 50%,40% 50%,70% 100%,40% 100%,20% 50%,0 50%); transform: rotate(-30deg); box-shadow: 0 0 6px rgba(0,0,0,.3); z-index: 1000; }
+
+    /* ---------- 第二页 (Journey) ---------- */
+    section#next-page {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      box-sizing: border-box;
+      background-color: transparent; /* 背景在 .browser-content */
+    }
+
+    /* browser-frame 样式（在第二页内部） */
+    .browser-frame {
+      width: 90%;
+      height: calc(100vh - 40px); /* 顶部留空一点 */
+      margin: 20px auto;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.2);
+      background: #fff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+
+    .browser-header {
+      height: 32px;
+      background: #f5f5f7;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 8px;
+    }
+    .browser-header .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    .browser-header .red { background: #ff5f57; }
+    .browser-header .yellow { background: #ffbd2e; }
+    .browser-header .green { background: #28c940; }
+
+    /* 关键改动：把背景放在 .browser-content（铺满），把可缩放内容放在 .journey-inner */
+    .browser-content {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #eaeaea;   /*  <-- 这个背景会铺满浏览器窗口 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* road 背景图铺满浏览器窗口（cover） */
+    .browser-content #road-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* 可缩放的内部内容（动画元素放这里） */
+    .journey-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      z-index: 2; /* 在 road 之上 */
+      transform: scale(0.9);          /* 对内部内容按比例缩放 */
+      transform-origin: top center;
+      pointer-events: none; /* 如果需要交互改回 auto */
+    }
+
+    /* journey 内部样式（放在 journey-inner 内部） */
+    .journey-section {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    /* 小人（相对于 journey-inner） */
+    #little-person {
+      position: absolute;
+      width: 80px;
+      top: 20px;
+      left: 80px;
+      opacity: 0;
+      z-index: 3;
+      background: transparent;
+      filter: drop-shadow(4px 8px 6px rgba(0,0,0,0.3));
+      pointer-events: auto;
+    }
+
+    #journey-container {
+      position: absolute;
+      bottom: 100px;
+      left: 20px;
+      width: 70%;
+      height: 60%;
+      transform: rotate(-15deg);
+      z-index: 4;
+      pointer-events: auto;
+    }
+
+    .box-letter {
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 5rem;
+      font-weight: bold;
+      color: #111;
+      font-family: 'Courier New', monospace;
+      text-shadow: 4px 4px 0 rgba(0,0,0,0.25), 8px 8px 10px rgba(0,0,0,0.2);
+      opacity: 0;
+      z-index: 4;
+    }
+
+    /* 响应式：小屏稍微缩小字体 */
+    @media (max-width: 800px) {
+      .hero-container h1 { font-size: 2.4rem; }
+      .hero-container h2 { font-size: 1.2rem; border-right: 1px solid #555; }
+      .box-letter { font-size: 3rem; }
+      #visualization { width: 260px; height: 200px; }
+      .skill-card img { width: 200px; }
+      .browser-frame { width: 96%; height: calc(100vh - 32px); margin: 8px auto; }
+      .journey-inner { transform: scale(0.82); }
+    }
+  </style>
+   <style>
+    /* 现有样式保持不变... */
+    
+    /* 语言切换按钮样式 - 苹果风格 */
+.language-switcher {
+  display: flex;
+  background-color: #f5f5f7; /* 苹果浅灰背景 */
+  border-radius: 8px;
+  padding: 2px;
+  margin-right: 20px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #d1d1d6;
+}
+
+.lang-option {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  color: #8e8e93; /* 苹果深灰色 */
+}
+
+.lang-option.active {
+  background-color: #ffffff; /* 激活状态白色背景 */
+  color: #1d1d1f; /* 苹果深灰文字 */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.lang-option:not(.active):hover {
+  background-color: rgba(0,0,0,0.05);
+}
+  </style>
+</head>
+
+
+<body>
+
+  <!-- ---------- 首页 ---------- -->
+  <section id="home">
+    <!-- 网格背景 -->
+    <canvas id="grid-bg"></canvas>
+
+    <!-- 导航栏 -->
+   
+
+     <nav>
+
+        <div class="language-switcher">
+    <div class="lang-option active" data-lang="en">EN</div>
+    <div class="lang-option" data-lang="fr">FR</div>
+  </div>
+
+    
+    <a href="#home" data-translate="nav-home">Home</a>
+    <a href="#experience-page" data-translate="nav-about">Experience</a>
+    <a href="#project-page" data-translate="nav-project">Project</a>
+    <a href="#contact-page" data-translate="nav-contact">Contact</a>
+  </nav>
+<style>
+  html { scroll-behavior: smooth; } /* 平滑滚动 */
+  /* 如果你有固定 header（比如高度 72px），避免遮挡： */
+  section { scroll-margin-top: 80px; } /* 或者更大/更小，按你的 header 高度调整 */
+</style>
+    <!-- 中心文字 -->
+    <div class="hero-container">
+      <img src="image/avatar.png" alt="Avatar" class="hero-avatar" />
+      <h1 data-translate="hero-title">I'm Fengcai JI</h1>
+      <h2 id="animated-text"></h2>
+    </div>
+
+    <!-- 按钮（平滑滚动到 #next-page） -->
+    <div class="hero-btn-container">
+      <a href="#next-page" class="explore-btn" id="explore-btn" data-translate="explore-btn">Explore my world</a>
+    </div>
+
+    <!-- 技能卡 -->
+    <div class="skill-card data-analyst">
+      <img src="image/1_jWt7QPw7x86-BmiDMm3l_w.png" alt="Data Analyst Skills">
+    </div>
+    <div class="skill-card data-engineer">
+      <img src="image/powerbi_sqldashboard.jpg" alt="Data Engineer Skills">
+    </div>
+    <div class="skill-card business-analyst">
+      <img src="image/SQL-Server-Sample-Database.png" alt="Business Analyst Skills">
+    </div>
+    <div class="skill-card data-scientist">
+      <img src="image/Figure-1-AWS-TabPy-800x448.png" alt="Data Scientist Skills">
+    </div>
+
+    <!-- 3D 可视化 -->
+    <div id="visualization"></div>
+
+    <!-- 演示轨迹 SVG & cursor -->
+    <svg width="100%" height="100%">
+      <defs>
+        <linearGradient id="grad" gradientTransform="rotate(90)">
+          <stop offset="0%" stop-color="#6a5acd"/>
+          <stop offset="50%" stop-color="#20b2aa"/>
+          <stop offset="100%" stop-color="#4682b4"/>
+        </linearGradient>
+      </defs>
+      <path id="wave-path"></path>
+    </svg>
+    <div class="cursor" id="cursor"></div>
+  </section>
+
+<section id="next-page">
+  <style>
+  /* ===== Browser Frame ===== */
+  .browser-frame {
+    width: 90%;
+    height: calc(100vh - 40px);
+    margin: 20px auto;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .browser-header {
+    height: 32px;
+    background: #f5f5f7;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    z-index: 10;
+  }
+  .browser-header .dot{ width:12px; height:12px; border-radius:50%; display:inline-block; }
+  .browser-header .red{background:#ff5f57;} 
+  .browser-header .yellow{background:#ffbd2e;} 
+  .browser-header .green{background:#28c940;}
+
+  .browser-content{
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #eaeaea;
+    display: flex;
+    align-items: flex-start; 
+    justify-content: space-between; 
+    padding: 20px;
+  }
+
+  /* 小人 */
+  .journey-inner { 
+    width: 200px; 
+    position: relative; 
+    z-index:2; 
+  }
+  #little-person { 
+    width: 80px; 
+    opacity:0; 
+    filter: drop-shadow(4px 8px 6px rgba(0,0,0,0.3)); 
+  }
+
+ /* Area of Interest 右侧区域 */
+.area-of-interest-wrapper {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-left: 40px;
+  font-family: 'Arial', sans-serif; /* 新字体 */
+}
+
+.area-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #111;
+  margin-bottom: 10px;
+}
+
+.area-of-interest {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  grid-template-rows: repeat(2, auto);   
+  gap: 40px 30px; /* 行列间距加大，保证第二行下移 */
+}
+
+.interest-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* 图标 */
+.interest-item img {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 10px;
+}
+
+/* 小标题（图标下方的名称） */
+.interest-item p:first-of-type {
+  font-size: 1rem;       /* 标题字体稍大 */
+  font-weight: bold;     /* 加粗 */
+  color: #111;           /* 标题颜色保持深色 */
+  margin: 4px 0 2px 0;
+}
+
+/* 说明文字（第二行及以后） */
+.interest-item p:not(:first-of-type) {
+  font-size: 0.9rem;     /* 比标题小一号 */
+  font-weight: normal;
+  color: #555;           /* 略浅色 */
+  line-height: 1.2;      /* 紧凑一些 */
+  margin: 2px 0;         /* 上下间距小一点 */
+}
+
+  @media (max-width:900px){
+    .browser-content{ flex-direction: column; align-items:center; padding:10px; }
+    .journey-inner { width: 150px; margin-bottom:20px; }
+    .area-of-interest-wrapper { padding-left:0; width:100%; }
+    .area-of-interest { grid-template-columns: repeat(3, 1fr); gap:25px 15px; }
+    .interest-item img { width:50px; height:50px; }
+    .interest-item p { font-size:0.8rem; min-height:40px; }
+  }
+  </style>
+
+  <div class="browser-frame">
+    <div class="browser-header">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+    </div>
+
+    <div class="browser-content">
+      <!-- 左侧小人 -->
+      <div class="journey-inner">
+        <img src="image/IMG_1690.PNG" alt="3D小人" id="little-person" />
+      </div>
+
+      <!-- 右侧 Area of Interest -->
+      <div class="area-of-interest-wrapper">
+        <div class="area-title" data-translate="area-of-interest">Area of Interest</div>
+        <div class="area-of-interest">
+          <div class="interest-item">
+  <img src="image/icon data analytics.png" alt="Icon 1">
+  <p data-translate="data-analytics">Data Analytics</p>
+  <p data-translate="data-analytics-desc">Skilled at processing and analyzing large amounts of data to uncover key insights.</p>
+</div>
+          <div class="interest-item">
+  <img src="image/icon base de donnee.png" alt="Icon 2">
+  <p data-translate="data-base">Data Base</p>
+  <p data-translate="data-base-desc">Familiar with database management and query optimization to ensure data integrity.</p>
+</div>
+          <div class="interest-item">
+  <img src="image/icon data vis.png" alt="Icon 3">
+  <p data-translate="data-visualisation">Data Visualisation</p>
+  <p data-translate="data-visualisation-desc">Able to transform data into clear visual charts for better understanding.</p>
+</div>
+          <div class="interest-item">
+  <img src="image/icon machine learning.png" alt="Icon 4">
+  <p data-translate="machine-learning">Machine Learning</p>
+  <p data-translate="machine-learning-desc">Capable of building machine learning models for predictive analysis.</p>
+</div>
+          <div class="interest-item">
+  <img src="image/icon big data.png" alt="Icon 5">
+  <p data-translate="big-data">Big Data</p>
+  <p data-translate="big-data-desc">Proficient in handling massive datasets and mastering big data processing techniques.</p>
+</div>
+          <div class="interest-item">
+  <img src="image/icon ai.png" alt="Icon 6">
+  <p data-translate="ai-research">AI Research</p>
+  <p data-translate="ai-research-desc">Passionate about artificial intelligence research and continuously exploring new methods.</p>
+</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const littlePerson = document.querySelector("#little-person");
+
+  gsap.fromTo(littlePerson, 
+    {opacity:0, y:-400}, 
+    {opacity:1, y:0, duration:2, ease:"bounce.out",
+      onComplete:()=>{
+        gsap.to(littlePerson,{
+          y:'+=10',      
+          x:'+=5',       
+          rotation:'+=2', 
+          duration:2,
+          repeat:-1,
+          yoyo:true,
+          ease:"sine.inOut",
+          onUpdate: () => {
+            const rect = littlePerson.getBoundingClientRect();
+            littlePerson.style.filter = `drop-shadow(${rect.top/20}px ${rect.top/10}px 6px rgba(0,0,0,0.3))`;
+          }
+        });
+      }
+    }
+  );
+});
+</script>
+
+
+
+  <!-- ========== 脚本 ========== -->
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <!-- 打字机效果 -->
+  <script>
+    const words = ["Data Analyst", "Data Engineer", "Business Analyst", "Web Analyst"];
+    const typingSpeed = 150, deletingSpeed = 80, delayBetweenWords = 1000;
+    let wordIndex = 0, charIndex = 0, deleting = false;
+    const animatedText = document.getElementById("animated-text");
+    function type() {
+      const currentWord = words[wordIndex];
+      if(!deleting){
+        animatedText.textContent = currentWord.substring(0, charIndex + 1);
+        charIndex++;
+        if(charIndex === currentWord.length){
+          deleting = true;
+          setTimeout(type, delayBetweenWords);
+          return;
+        }
+      } else {
+        animatedText.textContent = currentWord.substring(0, charIndex - 1);
+        charIndex--;
+        if(charIndex === 0){
+          deleting = false;
+          wordIndex = (wordIndex + 1) % words.length;
+        }
+      }
+      setTimeout(type, deleting ? deletingSpeed : typingSpeed);
+    }
+    type();
+  </script>
+
+  <!-- 技能图可拖动 -->
+  <script>
+    const cards = document.querySelectorAll('.skill-card');
+    cards.forEach(card => {
+      let offsetX=0, offsetY=0, isDragging=false;
+      card.addEventListener('mousedown', e=>{
+        isDragging=true; card.style.cursor='grabbing';
+        offsetX = e.clientX - card.offsetLeft;
+        offsetY = e.clientY - card.offsetTop;
+      });
+      window.addEventListener('mousemove', e=>{
+        if(!isDragging) return;
+        let x = e.clientX - offsetX;
+        let y = e.clientY - offsetY;
+        x = Math.max(0, Math.min(window.innerWidth - card.offsetWidth, x));
+        y = Math.max(0, Math.min(window.innerHeight - card.offsetHeight, y));
+        card.style.left = x+'px';
+        card.style.top = y+'px';
+      });
+      window.addEventListener('mouseup', ()=>{ isDragging=false; card.style.cursor='grab'; });
+    });
+  </script>
+
+<!-- 演示轨迹动画 -->
+<script>
+window.onload = () => {
+  const cursor = document.getElementById('cursor');
+  const path = document.getElementById('wave-path');
+
+  // 创建 drag 标识
+  const dragLabel = document.createElement('div');
+  dragLabel.textContent = 'drag';
+  dragLabel.style.position = 'absolute';
+  dragLabel.style.fontSize = '12px';
+  dragLabel.style.color = '#111';
+  dragLabel.style.backgroundColor = '#ffd';
+  dragLabel.style.padding = '2px 5px';
+  dragLabel.style.borderRadius = '4px';
+  dragLabel.style.pointerEvents = 'none';
+  dragLabel.style.fontFamily = 'Courier New, monospace';
+  dragLabel.style.zIndex = '1001';
+  document.body.appendChild(dragLabel);
+
+  const img = document.querySelector('.data-analyst img');
+  const rect = img.getBoundingClientRect();
+
+  const startX = rect.left - 60;
+  const startY = rect.top + rect.height/2;
+  const endX = rect.left + rect.width + 80;
+  const endY = rect.top + rect.height + 50;
+
+  const wavePath = `M${startX},${startY} C${startX+100},${startY-80}, ${endX-100},${endY+80}, ${endX},${endY}`;
+  path.setAttribute('d', wavePath);
+
+  const pathLength = path.getTotalLength();
+  let progress=0;
+  const speed=0.003;
+
+  function animate() {
+    const point = path.getPointAtLength(pathLength * progress);
+    cursor.style.left = point.x + "px";
+    cursor.style.top = point.y + "px";
+
+    // 让 dragLabel 紧跟 cursor
+    dragLabel.style.left = (point.x + 20) + "px";  // 偏右一些
+    dragLabel.style.top = (point.y - 10) + "px";   // 偏上一些
+
+    progress += speed;
+    if(progress > 1) progress = 0;
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+};
+</script>
+
+  <!-- Plotly 3D -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script>
+    const trace = {
+      x: Array.from({length:40},()=>Math.random()*10),
+      y: Array.from({length:40},()=>Math.random()*10),
+      z: Array.from({length:40},()=>Math.random()*10),
+      mode:'markers',
+      marker:{size:6,color:Array.from({length:40},()=>Math.floor(Math.random()*4)),colorscale:[[0,'#6a5acd'],[0.33,'#20b2aa'],[0.66,'#4682b4'],[1,'#dda0dd']]},
+      type:'scatter3d'
+    };
+    const layout = {margin:{l:0,r:0,b:0,t:0},paper_bgcolor:'rgba(0,0,0,0)',scene:{xaxis:{backgroundcolor:'rgba(0,0,0,0)'},yaxis:{backgroundcolor:'rgba(0,0,0,0)'},zaxis:{backgroundcolor:'rgba(0,0,0,0)'}}};
+    Plotly.newPlot('visualization',[trace],layout,{displayModeBar:false});
+
+    let angle=0, rotationInterval;
+    function startRotation(){
+      rotationInterval=setInterval(()=>{
+        angle+=0.02;
+        const eye={x:1.5*Math.cos(angle),y:1.5*Math.sin(angle),z:0.8};
+        Plotly.relayout('visualization',{'scene.camera.eye':eye});
+      },50);
+    }
+    function stopRotation(){ clearInterval(rotationInterval); }
+    startRotation();
+    const viz=document.getElementById('visualization');
+    if (viz) {
+      viz.addEventListener('mouseenter',stopRotation);
+      viz.addEventListener('mouseleave',startRotation);
+    }
+  </script>
+
+  <!-- 网格背景绘制 -->
+  <script>
+   const canvas = document.getElementById('grid-bg');
+   const ctx = canvas.getContext('2d');
+
+   function resizeCanvas() {
+     canvas.width = window.innerWidth;
+     canvas.height = window.innerHeight;
+   }
+   resizeCanvas();
+   window.addEventListener('resize', resizeCanvas);
+
+   const gridSize = 40;
+   let offset = 0;
+
+   function drawGrid() {
+     ctx.clearRect(0, 0, canvas.width, canvas.height);
+     ctx.strokeStyle = '#ccc';
+     ctx.lineWidth = 1;
+     for (let x = -offset; x < canvas.width; x += gridSize) {
+       ctx.beginPath();
+       ctx.moveTo(x, 0);
+       ctx.lineTo(x, canvas.height);
+       ctx.stroke();
+     }
+     for (let y = -offset; y < canvas.height; y += gridSize) {
+       ctx.beginPath();
+       ctx.moveTo(0, y);
+       ctx.lineTo(canvas.width, y);
+       ctx.stroke();
+     }
+     offset += 0.5;
+     if (offset >= gridSize) offset = 0;
+     requestAnimationFrame(drawGrid);
+   }
+   drawGrid();
+  </script>
+
+  <!-- ========== Journey 动画: GSAP ========== -->
+  <script>
+  function playJourneyAnimation() {
+    const letters = document.querySelectorAll(".box-letter");
+    const littlePerson = document.querySelector("#little-person");
+
+    if(!letters.length || !littlePerson) return;
+
+    // 如果已经播放过则不重复（用 data- 播放标记）
+    if (littlePerson.dataset.played === "1") return;
+    littlePerson.dataset.played = "1";
+
+// 定义偏移量
+const yOffset = 100;  // 下移 60px
+const xOffset = -70; // 向左移动 20px
+const targetPositions = [
+  {x:0,   y:0 + yOffset},
+  {x:54,  y:0 + yOffset},
+  {x:0,   y:72 + yOffset},
+  {x:57,  y:72 + yOffset},
+  {x:114, y:72 + yOffset},
+  {x:0,   y:144 + yOffset},
+  {x:60,  y:144 + yOffset},
+  {x:120, y:144 + yOffset},
+  {x:180, y:144 + yOffset}
+];
+
+// 可选：限制最大值不超出浏览器框
+const browserContent = document.querySelector('.browser-content');
+const maxY = browserContent.clientHeight - 10; // 留 100px 底部空隙
+const maxX = browserContent.clientWidth - 20;  // 留右侧空隙
+targetPositions.forEach(p => {
+  if(p.y > maxY) p.y = maxY;
+});
+    // 小人下落：初始 top 在 -400（相对于 journey-inner）
+    gsap.set(littlePerson, { top: -400, left: littlePerson.style.left || 80 });
+    gsap.to(littlePerson, {
+      opacity: 1,
+      top: 20,
+      duration: 2,
+      ease: "bounce.out",
+      onComplete: () => {
+        gsap.to(littlePerson, {
+          top: '+=10',
+          left: '+=5',
+          rotation: '+=2',
+          duration: 2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          onUpdate: () => {
+            const rect = littlePerson.getBoundingClientRect();
+            littlePerson.style.filter = `drop-shadow(${rect.top/20}px ${rect.top/10}px 6px rgba(0,0,0,0.3))`;
+          }
+        });
+      }
+    });
+
+    // 文字从上方落下到目标 left/top（使用 container 宽度限制随机起点）
+    const containerWidth = document.querySelector('.journey-inner').clientWidth || window.innerWidth;
+    letters.forEach((letter, i) => {
+      const startLeft = Math.floor(Math.random() * (containerWidth * 0.6));
+      const startTop = -400;
+      gsap.set(letter, { left: startLeft, top: startTop, rotation: Math.random() * 180 });
+
+      gsap.to(letter, {
+        opacity: 1,
+        duration: 2,
+        delay: 0.1 + i * 0.2,
+        top: targetPositions[i].y + (Math.random() * 15),
+        left: targetPositions[i].x + (Math.random() * 15),
+        rotation: (Math.random() * 30 - 15),
+        ease: "bounce.out"
+      });
+    });
+  }
+
+  // IntersectionObserver: 当 next-page 的一半进入视口时播放一次动画
+  (function observeJourney() {
+    const target = document.getElementById('next-page');
+    if (!target) return;
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          playJourneyAnimation();
+        }
+      });
+    }, { threshold: 0.5 });
+    io.observe(target);
+  })();
+  </script>
+
+<!-- ====== 第三页（My Experience） - 完整可替换片段 ====== -->
+<section id="experience-page">
+  <div class="experience-frame">
+    <h2 class="experience-title" data-translate="experience-title">My Experience</h2>
+
+    <div class="notes-container">
+      <!-- 便利贴 1 -->
+    <div class="note" style="background-image: url('image/post%20it%201.png');">
+      <div class="note-labels">
+       <div class="note-title" data-translate="exp1-title">Data &amp; Business Intelligence Analyst</div>
+       <div class="note-company" data-translate="exp1-company">Fédération Nationale de l'Aviation et de ses Métiers</div>
+       <div class="note-meta" data-translate="exp1-meta">04/2025 - 09/2025 · Paris, France</div>
+     </div>
+<div class="note-front-content" style="display:none">
+  <h3 data-translate="exp1-front-title">Data &amp; Business Intelligence Analyst</h3>
+  <p data-translate="exp1-front-company">Fédération Nationale de l'Aviation et de ses Métiers</p>
+  <p data-translate="exp1-front-dates">04/2025 - 09/2025</p>
+  <p data-translate="exp1-front-location">Paris, France</p>
+</div>
+<div class="note-back-content" style="display:none">
+  <p data-translate="exp1-back-1"><strong>Conducted strategic sector analyses:</strong> monitored regulatory and policy changes, evaluated impacts on industry competitiveness.</p>
+  <p data-translate="exp1-back-2"><strong>Consolidated insights:</strong> communicated findings to executive stakeholders to support decision-making.</p>
+  <p data-translate="exp1-back-3"><strong>Designed and implemented a BI strategy:</strong> defined strategic framework and business requirements.</p>
+  <p data-translate="exp1-back-4"><strong>Developed, deployed, and published an interactive Tableau dashboard:</strong> published interactive dashboard on the FNAM official website with advanced interactive features to enhance data comprehension and support decision-making.</p>
+  <p data-translate="exp1-back-5"><strong>Performed data valorization and predictive modeling:</strong> conducted prospective studies and implemented statistical and economic models to anticipate traffic trends, producing strategic analyses to guide member decisions.</p>
+  <p data-translate="exp1-back-6"><strong>Automated data processes:</strong> created scripts and workflows to ensure reliable data collection, processing, and updates.</p>
+  <p data-translate="exp1-back-7"><strong>Promoted data literacy:</strong> authored user guides and conducted webinars to train internal and external teams and members.</p>
+</div>
+</div>
+
+      <!-- 便利贴 2 -->
+      <div class="note" style="background-image: url('image/post%20it%202.png');">
+        <div class="note-labels">
+  <div class="note-title" data-translate="exp2-title">Master's in Information Systems Management, specializing in Data Intelligence (Big Data)</div>
+  <div class="note-company" data-translate="exp2-company">Université Grenoble Alpes/Grenoble IAE</div>
+  <div class="note-meta" data-translate="exp2-meta">09/2023-10/2025 · Grenoble, France</div>
+</div>
+<div class="note-front-content" style="display:none">
+  <h3 data-translate="exp2-front-title">Master's in Information Systems Management, specializing in Data Intelligence (Big Data)</h3>
+  <p data-translate="exp2-front-company">Université Grenoble Alpes/Grenoble IAE</p>
+  <p data-translate="exp2-front-dates">09/2023-10/2025 · Grenoble, France</p>
+</div>
+<div class="note-back-content" style="display:none">
+  <p data-translate="exp2-back-1"><strong>Core Courses:</strong></p>
+  <ul>
+    <li data-translate="exp2-course-1">Data Mining & Predictive Analytics</li>
+    <li data-translate="exp2-course-2">Big Data Management & Cloud Computing</li>
+    <li data-translate="exp2-course-3">Business Intelligence & Data Visualization</li>
+    <li data-translate="exp2-course-4">Machine Learning & AI Applications</li>
+    <li data-translate="exp2-course-5">Information Systems Strategy & Project Management</li>
+    <li data-translate="exp2-course-6">Database Design & SQL Programming</li>
+    <li data-translate="exp2-course-7">Agile Project Management & Scrum Methodology</li>
+    <li data-translate="exp2-course-8">Recette & Quality Assurance for IT Projects</li>
+    <li data-translate="exp2-course-9">Risk Management & IT Governance</li>
+  </ul>
+  <p data-translate="exp2-back-2"><strong>Skills Developed:</strong></p>
+  <ul>
+    <li data-translate="exp2-skill-1">Analyzing complex datasets and deriving actionable insights</li>
+    <li data-translate="exp2-skill-2">Building interactive dashboards and data visualizations</li>
+    <li data-translate="exp2-skill-3">Applying machine learning models to real-world business problems</li>
+    <li data-translate="exp2-skill-4">Implementing data pipelines and cloud-based solutions</li>
+    <li data-translate="exp2-skill-5">Strategic decision-making based on quantitative analysis</li>
+    <li data-translate="exp2-skill-6">Collaborating effectively in data-driven project teams</li>
+  </ul>
+</div>
+
+      </div>
+
+      <!-- 便利贴 3 -->
+      <div class="note" style="background-image: url('image/post%20it%203.png');">
+        <div class="note-labels">
+  <div class="note-title" data-translate="exp3-title">Data Analyst</div>
+  <div class="note-company" data-translate="exp3-company">Logic2profit</div>
+  <div class="note-meta" data-translate="exp3-meta">04/2024-08/2024 · Rouen,France</div>
+</div>
+<div class="note-front-content" style="display:none">
+  <h3 data-translate="exp3-front-title">Data Analyst</h3>
+  <p data-translate="exp3-front-company">Logic2profit</p>
+  <p data-translate="exp3-front-dates">04/2024-08/2024 · Rouen,France</p>
+</div>
+<div class="note-back-content" style="display:none">
+  <p data-translate="exp3-back-1"><strong>Full BI Project Lifecycle: </strong></p>
+  <ul>
+    <li data-translate="exp3-back-1-1">requirements analysis, data modeling, data quality management, data warehouse design and construction, database updates and maintenance.</li>
+  </ul>
+  <p data-translate="exp3-back-2"><strong>Supported project management:</strong></p>
+  <ul>
+    <li data-translate="exp3-back-2-1">Assisted industrial SME clients in their digital transformation by integrating, harmonizing, and analyzing data from multiple systems (CRM, ERP, MRP).</li>
+    <li data-translate="exp3-back-2-2">Developed interactive dashboards and implemented BI performance indicators to enhance operational insights.</li>
+    <li data-translate="exp3-back-2-3">Prepared deliverables and coordinated with stakeholders to ensure alignment with business objectives</li>
+  </ul>
+  <p data-translate="exp3-back-3"><strong>Contributed to BI governance:</strong></p>
+  <ul>
+    <li data-translate="exp3-back-3-1">monitored system performance, managed deliveries, analyzed and resolved data anomalies, and implemented corrective and evolutionary developments to maintain data quality and consistency.</li>
+    <li data-translate="exp3-back-3-2">Documented data processes and improvement workflows to support knowledge sharing and process standardization.</li>
+  </ul>
+</div>
+
+      </div>
+
+      <!-- 便利贴 4 -->
+      <div class="note" style="background-image: url('image/post%20it%204.png');">
+        <div class="note-labels">
+  <div class="note-title" data-translate="exp4-title">Bachelor's in French language and literature Bachelor's in Information Systems Management(Double Degree)</div>
+  <div class="note-company" data-translate="exp4-company">Shanghai International Studies University</div>
+  <div class="note-meta" data-translate="exp4-meta">09/2019-06/2023 · Shanghai, China</div>
+</div>
+<div class="note-front-content" style="display:none">
+  <h3 data-translate="exp4-front-title">Bachelor's in French language and literature Bachelor's in Information Systems Management(Double Degree)</h3>
+  <p data-translate="exp4-front-company">Shanghai International Studies University</p>
+  <p data-translate="exp4-front-dates">09/2019-06/2023 · Shanghai, China</p>
+</div>
+<div class="note-back-content" style="display:none">
+  <p data-translate="exp4-back-1"><strong>Core Courses:</strong></p>
+  <ul>
+    <!-- French Language & Literature -->
+    <li data-translate="exp4-course-1">Advanced French Language & Communication</li>
+    <li data-translate="exp4-course-2">French Literature: Classical & Modern</li>
+    <li data-translate="exp4-course-3">French Cultural Studies & History</li>
+    <li data-translate="exp4-course-4">Translation & Interpretation Techniques</li>
+    <li data-translate="exp4-course-5">Comparative Literature & Linguistics</li>
+    <!-- Information Systems Management -->
+    <li data-translate="exp4-course-6">Introduction to Information Systems</li>
+    <li data-translate="exp4-course-7">Database Management & SQL Programming</li>
+    <li data-translate="exp4-course-8">Business Intelligence & Data Analysis</li>
+    <li data-translate="exp4-course-9">Systems Analysis & Design</li>
+    <li data-translate="exp4-course-10">Project Management & IT Governance</li>
+  </ul>
+  <p data-translate="exp4-back-2"><strong>Skills Developed:</strong></p>
+  <ul>
+    <!-- French skills -->
+    <li data-translate="exp4-skill-1">Advanced proficiency in French reading, writing, and oral communication</li>
+    <li data-translate="exp4-skill-2">Literary analysis and critical thinking in cross-cultural contexts</li>
+    <li data-translate="exp4-skill-3">Translation and interpretation between French and native language</li>
+    <!-- ISM skills -->
+    <li data-translate="exp4-skill-4">Designing and managing information systems</li>
+    <li data-translate="exp4-skill-5">Data analysis and business intelligence insights</li>
+    <li data-translate="exp4-skill-6">Database creation, querying, and maintenance</li>
+    <li data-translate="exp4-skill-7">Project planning and IT project execution</li>
+    <li data-translate="exp4-skill-8">Cross-disciplinary problem solving combining language and tech skills</li>
+  </ul>
+</div>
+      </div>
+
+      <!-- 便利贴 5 (second row begins) -->
+      <div class="note" style="background-image: url('image/post%20it%205.png');">
+      <div class="note-labels">
+  <div class="note-title" data-translate="exp5-title">IT Business Partner</div>
+  <div class="note-company" data-translate="exp5-company">The Walt Disney Company</div>
+  <div class="note-meta" data-translate="exp5-meta">09/2022-09/2023 · Shanghai,China</div>
+</div>
+<div class="note-front-content" style="display:none">
+  <h3 data-translate="exp5-front-title">IT Business Partner</h3>
+  <p data-translate="exp5-front-company">The Walt Disney Company</p>
+  <p data-translate="exp5-front-dates">09/2022-09/2023 · Shanghai,China</p>
+</div>
+<div class="note-back-content" style="display:none">
+  <p data-translate="exp5-back-1"><strong>IT Project Management:</strong></p>
+  <ul>
+    <li data-translate="exp5-back-1-1">Data management and administration on the ERP, optimization of information flows, ensuring data quality, and updating and maintaining databases.</li>
+  </ul>
+  <p data-translate="exp5-back-2"><strong>Project Management Support:</strong></p>
+  <ul>
+    <li data-translate="exp5-back-2-1">Customer data analysis (profiling, purchasing behavior, engagement).</li>
+    <li data-translate="exp5-back-2-2">Development of CRM indicators and dashboards.</li>
+    <li data-translate="exp5-back-2-3">Implementation of new multi-platform information systems.</li>
+  </ul>
+  <p data-translate="exp5-back-3"><strong>Project Monitoring and Optimization:</strong></p>
+  <ul>
+    <li data-translate="exp5-back-3-1">Testing, user support, performance tracking, system improvements.</li>
+    <li data-translate="exp5-back-3-2">Process documentation.</li>
+    <li data-translate="exp5-back-3-3">Collaboration with external IT partners.</li>
+  </ul>
+</div>
+
+      </div>
+
+      <!-- 便利贴 6 -->
+      <div class="note" style="background-image: url('image/post%20it%206.png');">
+       <div class="note-labels">
+  <div class="note-title" data-translate="exp6-title">IT Business Manager</div>
+  <div class="note-company" data-translate="exp6-company">Huawei Technologies</div>
+  <div class="note-meta" data-translate="exp6-meta">04/2022-06/2022 · Shanghai,China</div>
+</div>
+<div class="note-front-content" style="display:none">
+  <h3 data-translate="exp6-front-title">IT Business Manager</h3>
+  <p data-translate="exp6-front-company">Huawei Technologies</p>
+  <p data-translate="exp6-front-dates">04/2022-06/2022 · Shanghai,China</p>
+</div>
+<div class="note-back-content" style="display:none">
+  <p data-translate="exp6-back-1"><strong>Project Coordination & IT Management:</strong></p>
+  <ul>
+    <li data-translate="exp6-back-1-1">Coordinated cross-functional IT projects, ensuring timelines and deliverables were met.</li>
+    <li data-translate="exp6-back-1-2">Collaborated with stakeholders to define project requirements and KPIs.</li>
+    <li data-translate="exp6-back-1-3">Monitored project progress and managed risk mitigation strategies.</li>
+  </ul>
+  <p data-translate="exp6-back-2"><strong>System Implementation & Optimization:</strong></p>
+  <ul>
+    <li data-translate="exp6-back-2-1">Assisted in deployment of internal IT systems to streamline business operations.</li>
+    <li data-translate="exp6-back-2-2">Analyzed current IT processes and suggested improvements for efficiency.</li>
+    <li data-translate="exp6-back-2-3">Documented system configurations and user guidelines for internal teams.</li>
+  </ul>
+  <p data-translate="exp6-back-3"><strong>Data Analysis & Reporting:</strong></p>
+  <ul>
+    <li data-translate="exp6-back-3-1">Collected and analyzed business data to support decision-making.</li>
+    <li data-translate="exp6-back-3-2">Prepared reports and dashboards for management using internal BI tools.</li>
+  </ul>
+  <p data-translate="exp6-back-4"><strong>Stakeholder Communication & Training:</strong></p>
+  <ul>
+    <li data-translate="exp6-back-4-1">Conducted training sessions for employees on new IT systems and workflows.</li>
+    <li data-translate="exp6-back-4-2">Maintained clear communication between IT teams and business units.</li>
+  </ul>
+</div>
+      </div>
+
+      <!-- ===== 右下角 3D 小人（新增） ===== -->
+    <!-- 把 image/your-new-3d.png 换成你的 3D 小人图片文件名 -->
+    <img id="little-person-expr" src="image/avatar diplome.PNG" alt="3D little person" />
+    <!-- ===== end little person ===== -->
+
+    </div>
+  </div>
+</section>
+
+<!-- Overlay singleton -->
+<div id="note-overlay" class="note-overlay" aria-hidden="true">
+  <div class="overlay-card" role="dialog" aria-modal="true">
+    <button class="overlay-close" aria-label="Close">✕</button>
+    <div class="overlay-inner">
+      <div class="overlay-front"></div>
+      <div class="overlay-back"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== STYLES (include in head or existing style block) ====== -->
+<style>
+/* Google Fonts for labels */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto+Slab:wght@400;600&display=swap');
+
+/* page */
+#experience-page,
+#experience-page .experience-frame{
+  position: relative !important;
+  background: transparent !important;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  background: #fafafa;
+  box-sizing: border-box;
+}
+.experience-title {
+  font-size: 2rem;
+  font-weight:700;
+  margin-bottom: 28px;
+  font-family: Arial, sans-serif;
+  color: #222;
+}
+
+/* notes layout - keep 1st row 4 items and 2nd row 2 items */
+.notes-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px 32px;
+  width: 100%;
+  max-width: 1200px;
+  box-sizing: border-box;
+}
+
+/* single sticky note */
+.note {
+  width: 220px;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  box-shadow: 4px 6px 12px rgba(0,0,0,0.12);
+  transform: rotate(-2deg);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+  color: #222;
+  font-weight: 600;
+}
+
+/* hover pop */
+.note:hover {
+  transform: scale(1.06);
+  box-shadow: 12px 18px 36px rgba(0,0,0,0.18);
+  z-index: 6;
+}
+
+/* Visible labels layout on each note */
+.note-labels {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+/* Title: bold, Montserrat */
+.note-title {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: #111;
+  line-height: 1.12;
+}
+
+/* Company: Roboto Slab */
+.note-company {
+  font-family: 'Roboto Slab', Georgia, serif;
+  font-weight: 600;
+  font-size: 0.86rem;
+  color: #333;
+  line-height: 1.14;
+}
+
+/* Meta (date/place): monospace, smaller, lighter */
+.note-meta {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #666;
+  line-height: 1.1;
+}
+
+/* ensure labels wrap safely */
+.note-labels * { max-width: 100%; word-break: break-word; overflow-wrap: anywhere; }
+
+/* overlay */
+.note-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.36);
+  z-index: 9999;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.note-overlay.active { display:flex; }
+
+/* overlay card (3D) */
+.overlay-card {
+  width: 720px;
+  max-width: calc(100% - 60px);
+  height: 560px;
+  max-height: calc(100% - 100px);
+  position: relative;
+  perspective: 1400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* close */
+.overlay-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 40;
+  background: rgba(255,255,255,0.95);
+  border: none;
+  border-radius: 6px;
+  width:36px;height:36px;font-size:18px;cursor:pointer;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* inner flipping area */
+.overlay-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.32);
+  background: #fff;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+/* panels */
+.overlay-front, .overlay-back {
+  position: absolute;
+  inset: 0;
+  padding: 26px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: #fff;
+  font-family: Arial, sans-serif;
+  color: #222;
+  line-height: 1.45;
+}
+.overlay-front { transform: rotateY(0deg); }
+.overlay-back  { transform: rotateY(180deg); }
+
+.overlay-front h3, .overlay-back h3 { margin-top: 0; font-size: 1.1rem; font-weight:700; }
+.overlay-front p, .overlay-back p { margin: 10px 0; font-size: 0.96rem; color: #222; }
+
+/* ---------- NEW: little person for Experience page ---------- */
+#experience-page #little-person-expr {
+  position: absolute;
+  bottom: 20px;
+  right: 24px;
+  width: 110px;              /* initial size (adjustable) */
+  max-width: 18%;            /* won't exceed a portion of viewport */
+  height: auto;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;      /* don't block clicks on notes */
+  filter: drop-shadow(4px 8px 6px rgba(0,0,0,0.3));
+  transition: transform 0.2s ease;
+}
+/* make sure on smaller screens it's smaller or hidden */
+@media (max-width: 1100px){
+  #little-person-expr { width: 90px; right: 18px; bottom: 18px; }
+}
+@media (max-width: 700px){
+  #little-person-expr { width: 64px; right: 12px; bottom: 12px; opacity: 0.95; } /* keep small but visible */
+}
+#little-person-expr { position: absolute !important; }
+
+/* responsive */
+@media (max-width:900px){
+  .overlay-card { width: 94%; height: 72%; }
+  .overlay-front, .overlay-back { padding: 16px; font-size: 0.92rem; }
+  .note { width: 180px; height: 160px; }
+  .note-title { font-size: 0.9rem; }
+  .note-company { font-size: 0.8rem; }
+  .note-meta { font-size: 0.72rem; }
+}
+</style>
+
+<!-- GSAP (include if not already present) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<!-- ====== interaction script ====== -->
+<script>
+(function(){
+  document.addEventListener('DOMContentLoaded', ()=>{
+
+    const overlay = document.getElementById('note-overlay');
+    const overlayInner = overlay.querySelector('.overlay-inner');
+    const overlayFront = overlay.querySelector('.overlay-front');
+    const overlayBack = overlay.querySelector('.overlay-back');
+    const closeBtn = overlay.querySelector('.overlay-close');
+
+    // baseline
+    gsap.set(overlayInner, {scale:0.96});
+    gsap.set(overlayFront, {rotationY:0});
+    gsap.set(overlayBack, {rotationY:180});
+
+    function setContent(frontHTML, backHTML){
+      overlayFront.innerHTML = frontHTML;
+      overlayBack.innerHTML = backHTML;
+      gsap.set(overlayFront, {rotationY:0});
+      gsap.set(overlayBack, {rotationY:180});
+      gsap.set(overlayInner, {scale:0.96});
+    }
+
+    function openOverlay(){
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      gsap.killTweensOf([overlayInner, overlayFront, overlayBack]);
+      gsap.timeline()
+        .to(overlayInner, {duration:0.06, scale:0.98, ease:'power1.out'})
+        .to(overlayInner, {duration:0.85, scale:1, ease:'back.out(1.1)'}, 0.06)
+        .to(overlayFront, {duration:0.6, rotationY:-180, ease:'power2.inOut'}, 0)
+        .to(overlayBack,  {duration:0.6, rotationY:0,    ease:'power2.inOut'}, 0);
+    }
+
+    function closeOverlay(){
+      gsap.killTweensOf([overlayInner, overlayFront, overlayBack]);
+      gsap.timeline()
+        .to(overlayFront, {duration:0.5, rotationY:0, ease:'power2.inOut'}, 0)
+        .to(overlayBack,  {duration:0.5, rotationY:180, ease:'power2.inOut'}, 0)
+        .to(overlayInner,{duration:0.45, scale:0.96, ease:'power2.inOut'}, 0.02)
+        .call(()=> {
+          overlay.classList.remove('active');
+          document.body.style.overflow = '';
+          overlayFront.innerHTML = '';
+          overlayBack.innerHTML = '';
+        }, null, '+=0');
+    }
+
+    // attach to notes
+    document.querySelectorAll('.note').forEach(note=>{
+      note.addEventListener('click', ()=>{
+        const f = note.querySelector('.note-front-content');
+        const b = note.querySelector('.note-back-content');
+
+        const frontHTML = f ? f.innerHTML : `<h3>${escapeHtml((note.querySelector('p')||{textContent:''}).textContent.trim())}</h3>`;
+        const backHTML  = b ? b.innerHTML  : `<p>No details provided.</p>`;
+
+        setContent(frontHTML, backHTML);
+        openOverlay();
+      });
+    });
+
+    // close handlers
+    closeBtn.addEventListener('click', closeOverlay);
+    overlay.addEventListener('click', (ev)=>{ if(ev.target === overlay) closeOverlay(); });
+    document.addEventListener('keydown', (ev)=>{ if(ev.key === 'Escape' && overlay.classList.contains('active')) closeOverlay(); });
+
+    function escapeHtml(str){ return str.replace(/[&<>"']/g, m=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  /* ---------------- little person animation for Experience page ---------------- */
+    const little = document.getElementById('little-person-expr');
+    if(little){
+      // initial drop + bounce, then float
+      gsap.fromTo(little,
+        { opacity: 0, y: -300 },
+        { 
+          opacity: 1,
+          y: 0,
+          duration: 1.6,
+          ease: "bounce.out",
+          onComplete: () => {
+            // continuous gentle float
+            gsap.to(little, {
+              y: '+=10',
+              x: '+=4',
+              rotation: '+=2',
+              duration: 2.4,
+              repeat: -1,
+              yoyo: true,
+              ease: "sine.inOut",
+              onUpdate: () => {
+                // dynamic drop shadow based on screen position (subtle)
+                const rect = little.getBoundingClientRect();
+                // keep values small so shadow is subtle and stable
+                const dx = Math.max(2, Math.min(12, rect.width / 30));
+                const dy = Math.max(4, Math.min(24, rect.top / 30));
+                little.style.filter = `drop-shadow(${dx}px ${dy}px 6px rgba(0,0,0,0.25))`;
+
+}
+            });
+          }
+        }
+      );
+    }
+
+  });
+})();
+</script>
+
+<!-- ====== My Skills Page (可见大圆圈版) ====== -->
+<section id="skills-page">
+  <div class="skills-frame">
+    <h2 class="skills-title" data-translate="skills-title">My Skills</h2>
+    
+    <div class="skills-container">
+      <div class="skills-left">
+        <!-- 10 技能大圆圈泡泡 -->
+        <div class="skill-bubble"><img src="image/power bi.png" alt="Power BI"></div>
+        <div class="skill-bubble"><img src="image/tableau.png" alt="Tableau"></div>
+        <div class="skill-bubble"><img src="image/python.png" alt="Python"></div>
+        <div class="skill-bubble"><img src="image/excel.png" alt="Excel"></div>
+        <div class="skill-bubble"><img src="image/sql.png" alt="SQL"></div>
+        <div class="skill-bubble"><img src="image/html.png" alt="html"></div>
+        <div class="skill-bubble"><img src="image/css.png" alt="css"></div>
+        <div class="skill-bubble"><img src="image/java.png" alt="java"></div>
+        <div class="skill-bubble"><img src="image/mongodb.png" alt="mongodb"></div>
+        <div class="skill-bubble"><img src="image/spark.png" alt="spark"></div>
+        <div class="skill-bubble"><img src="image/postgre.png" alt="postgre"></div>
+        <div class="skill-bubble"><img src="image/googlecloud.png" alt="googlecloud"></div>
+        <div class="skill-bubble"><img src="image/azure.png" alt="azure"></div>
+        <div class="skill-bubble"><img src="image/aws.png" alt="aws"></div>
+        <div class="skill-bubble"><img src="image/git.png" alt="git"></div>
+        <div class="skill-bubble"><img src="image/log.png" alt="log"></div>
+         <div class="skill-bubble"><img src="image/googleana.png" alt="googleana"></div>
+      </div>
+
+      
+  <!-- 右侧：证书轮播 -->
+      <div class="certificates">
+        <button class="cert-btn prev">◀</button>
+        <div class="cert-frame">
+          <img id="cert-image" src="image/google ana cert.png" alt="Certificate 1">
+          <p id="cert-caption">Certificate 1: Google analytics</p>
+        </div>
+        <button class="cert-btn next">▶</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+#skills-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  background: transparent; /* 保持动态网格背景可见 */
+  box-sizing: border-box;
+}
+
+.skills-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  font-family: Arial, sans-serif;
+  color: #000;
+}
+
+.skills-container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  gap: 40px;
+}
+
+.skills-left {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start;
+  align-content: flex-start;
+}
+
+.skill-bubble {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(100, 149, 237, 0.3); /* 浅蓝色，半透明，更明显 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.4); /* 边框更亮一点 */
+}
+
+.skill-bubble img {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+}
+
+.skill-bubble:hover {
+  transform: scale(1.2);
+  box-shadow: 0 10px 24px rgba(100, 149, 237, 0.6); /* 悬浮时蓝色光晕 */
+}
+
+.skills-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-left: 20px;
+}
+
+@media (max-width: 900px){
+  .skill-bubble { width: 100px; height: 100px; }
+  .skill-bubble img { width: 60%; height: 60%; }
+}
+
+/* 右侧证书 */
+.certificates {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.cert-frame {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  padding: 20px;
+}
+.cert-frame img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.cert-frame p {
+  margin-top: 12px;
+  font-size: 0.95rem;
+  color: #222;
+  font-family: Arial, sans-serif;
+}
+
+/* 按钮 */
+.cert-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  background: rgba(255,255,255,0.8);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.cert-btn:hover {
+  background: rgba(255,255,255,1);
+  transform: translateY(-50%) scale(1.15); /* 放大动画 */
+}
+.cert-btn.prev { left: -20px; }
+.cert-btn.next { right: -20px; }
+
+</style>
+<!-- ====== SCRIPT ====== -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const certs = [
+    {src: "image/google ana cert.png", caption: "Certificate 1: Google Analytics"},
+    {src: "image/tableau cert.png", caption: "Certificate 2: Tableau Specialist"},
+    {src: "image/Power Bi cert.png", caption: "Certificate 2: Power BI Data Methods"},
+    {src: "gallery/AWS.png", caption: "Certificate 3: AWS DepOps Engineer Professional Cert Prep"}
+  ];
+  let current = 0;
+
+  const imgEl = document.getElementById("cert-image");
+  const capEl = document.getElementById("cert-caption");
+  const prevBtn = document.querySelector(".cert-btn.prev");
+  const nextBtn = document.querySelector(".cert-btn.next");
+
+  function updateCert(index){
+    imgEl.src = certs[index].src;
+    capEl.textContent = certs[index].caption;
+  }
+
+  prevBtn.addEventListener("click", ()=>{
+    current = (current - 1 + certs.length) % certs.length;
+    updateCert(current);
+  });
+  nextBtn.addEventListener("click", ()=>{
+    current = (current + 1) % certs.length;
+    updateCert(current);
+  });
+});
+</script>
+
+<!-- ====== My Project Section（已替换：去掉背景图 & 在按钮下方插入图标） ====== -->
+<section id="project-page">
+  <div class="project-frame">
+    <h2 class="project-title" data-translate="project-title">My Projects</h2>
+
+   <style>
+  /* Scoped styles for #project-page */
+  #project-page { padding: 20px 0; }
+  #project-page .project-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 28px;
+    font-family: Arial, sans-serif;
+    color: #000;
+    text-align: center;
+  }
+
+  /* 图标区域 */
+  #project-page .icon-bar {
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+  }
+  #project-page .icon-wrap {
+    width:110px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    position:relative;
+  }
+  #project-page .icon-btn {
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    width:48px; height:48px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #project-page .icon-btn img {
+    width:48px; height:48px;
+    object-fit:cover;
+    border-radius:6px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+  }
+  #project-page .icon-label {
+    margin-top:4px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.8rem;
+    color:#444;
+    font-weight:600;
+    text-align:center;
+  }
+  #project-page .icon-wrap.active .icon-label { color:#1c1c1e; }
+
+  /* 网格 */
+  #project-page .project-panel { background:transparent; padding-top:10px; }
+  #project-page .project-grid-wrapper {
+    max-width: 820px;
+    margin: 0 auto;
+    transform: scale(1.02);
+    transform-origin: top center;
+  }
+  #project-page .project-grid {
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  #project-page .project-item {
+    position:relative;
+    width:100%;
+    aspect-ratio: 4 / 3;
+    overflow:hidden;
+    background:#f5f5f7;
+  }
+  #project-page .project-item img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition: transform .28s ease;
+  }
+  .project-item:hover img { transform: scale(1.06); }
+
+  /* ===== 遮罩层：浅灰半透明，不加 blur ===== */
+  #project-page .overlay {
+    position:absolute;
+    inset:0;
+    background: rgba(234,234,234,0.7); /* 浅灰 + 半透明，不模糊 */
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    opacity:1;
+    pointer-events:none; /* 不阻止 hover */
+    text-align:center;
+    padding:6px;
+  }
+
+  /* 小标题：深灰色字体，直接显示，无背景条 */
+  #project-page .overlay-title {
+    color:#1c1c1e;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.2px;
+    pointer-events:none;
+  }
+
+  /* 按钮（仍可点击） */
+  #project-page .overlay-buttons,
+  #project-page .overlay .overlay-btn { pointer-events:auto; }
+  #project-page .overlay-buttons { display:flex; gap:8px; }
+  #project-page .overlay-btn {
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.5);
+    color:#1c1c1e;
+    border:1px solid rgba(60,60,67,0.15);
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:600;
+    font-family: Arial, sans-serif;
+    transition: transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 2px 6px rgba(0,0,0,0.06);
+  }
+  #project-page .overlay-btn:hover {
+    transform: translateY(-2px);
+    background:#fff;
+    box-shadow:0 6px 14px rgba(0,0,0,0.1);
+  }
+
+  /* ====== Lightbox（苹果风格浏览器窗口） ====== */
+#pp-lightbox {
+  position: fixed;
+  inset: 0;
+  display: none; /* JS 控制显示： style.display = 'flex' */
+  justify-content: center;
+  align-items: center;
+  z-index: 12000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+#pp-lightbox-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  z-index: 12000;
+}
+
+/* 独立窗口 */
+.pp-window {
+  position: relative;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  width: min(960px, 98%);
+  max-width: 960px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  animation: pp-popIn .22s ease;
+  z-index: 12001;
+}
+
+/* header (mac three dots) */
+.pp-header {
+  background: #f2f2f7;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.pp-dot { width:12px; height:12px; border-radius:50%; display:inline-block; }
+.pp-dot--red { background:#ff5f57; }
+.pp-dot--yellow { background:#ffbd2e; }
+.pp-dot--green { background:#28c840; }
+
+/* content: vertical stack (image above, caption below) */
+.pp-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+  gap: 12px;
+  overflow: auto; /* 当图片+文字超出窗口时内部可滚动 */
+  flex: 1 1 auto;
+}
+
+#pp-lightbox-img {
+  width: 100%;
+  height: auto;
+  max-height: 50vh;
+  object-fit: contain;
+  border-radius: 6px;
+  display: block;
+}
+
+/* caption supports HTML (ul/li). if caption long can scroll */
+.pp-caption {
+  width: 100%;
+  margin-top: 0;
+  font-size: 0.95rem;
+  color: #1c1c1e;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  text-align: left;
+  padding-right: 6px;
+  box-sizing: border-box;
+}
+.pp-caption ul { padding-left: 20px; margin: 8px 0; }
+.pp-caption li { margin-bottom: 8px; }
+
+/* close button fixed in corner of window */
+.pp-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  border: none;
+  background: transparent;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #666;
+  cursor: pointer;
+  z-index: 12002;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+.pp-close:hover { background: rgba(0,0,0,0.04); }
+
+/* animation */
+@keyframes pp-popIn {
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* small screens */
+@media (max-width: 800px) {
+  .pp-window { max-height: 92vh; width: 96%; }
+  #pp-lightbox-img { max-height: 40vh; }
+  .pp-caption { max-height: 28vh; }
+}
+</style>
+
+    <div class="container">
+      <!-- ICON BAR -->
+      <div class="icon-bar" id="project-icon-bar">
+        <div class="icon-wrap" data-project="project-1">
+          <button class="icon-btn" data-project="project-1" aria-label="Home Project">
+            <img src="image/mac icon blue.png" alt="Home">
+          </button>
+          <div class="icon-label">Home</div>
+        </div>
+
+        <div class="icon-wrap" data-project="project-2">
+          <button class="icon-btn" data-project="project-2" aria-label="Project Tableau">
+            <img src="image/mac icon yellow.png" alt="Power BI">
+          </button>
+          <div class="icon-label">Tableau</div>
+        </div>
+
+        <div class="icon-wrap" data-project="project-3">
+          <button class="icon-btn" data-project="project-3" aria-label="Project Power BI">
+            <img src="image/mac icon orange.png" alt="Tableau">
+          </button>
+          <div class="icon-label">Power BI</div>
+        </div>
+
+        <div class="icon-wrap" data-project="project-4">
+          <button class="icon-btn" data-project="project-4" aria-label="Project Python">
+            <img src="image/mac icon pink.png" alt="Python">
+          </button>
+          <div class="icon-label">Python</div>
+        </div>
+
+        <div class="icon-wrap" data-project="project-5">
+          <button class="icon-btn" data-project="project-5" aria-label="Project Database">
+            <img src="image/mac icon purple.png" alt="Database">
+          </button>
+          <div class="icon-label">Database</div>
+        </div>
+
+        <div class="icon-wrap" data-project="project-6">
+          <button class="icon-btn" data-project="project-6" aria-label="Project Web">
+            <img src="image/mac icon green.png" alt="Web">
+          </button>
+          <div class="icon-label">Web</div>
+        </div>
+      </div>
+      <!-- PROJECT PANEL -->
+      <div class="project-panel">
+        <div id="project-content">
+          <p style="text-align:center; color:#666; margin:18px 0;">点击上方图标查看对应项目（上三张 / 下三张）。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- scoped Lightbox -->
+  <div id="pp-lightbox" aria-hidden="true">
+  <div id="pp-lightbox-bg" aria-hidden="true"></div>
+
+  <div class="pp-window" role="dialog" aria-modal="true" aria-labelledby="pp-lightbox-title">
+    <div class="pp-header">
+      <span class="pp-dot pp-dot--red"></span>
+      <span class="pp-dot pp-dot--yellow"></span>
+      <span class="pp-dot pp-dot--green"></span>
+    </div>
+
+    <div class="pp-content">
+      <img id="pp-lightbox-img" src="" alt="Preview">
+      <div id="pp-lightbox-caption" class="pp-caption"></div>
+    </div>
+
+    <button id="pp-lightbox-close" class="pp-close" aria-label="Close preview">✕</button>
+  </div>
+</div>
+
+   <script>
+  (function(){
+    const root = document.getElementById('project-page');
+
+    const PROJECT_GALLERIES = {
+      'project-1': ['gallery/Dashboard For French Aviation.png','gallery/Prediction model of forecasting Air traffic.png','gallery/Revenue&profitability.png','gallery/Data Cleaning.png','gallery/Mysql.png','gallery/bluesky developer.png'],
+      'project-2': ['gallery/Dashboard For French Aviation.png','gallery/Advanced Interactive Map Visualization.png','gallery/Interactive Trend Analysis Laboratory.png','gallery/Real Time Financial Dashboard.png','gallery/Dashboard Operation.png','gallery/Dashboard strategy.png'],
+      'project-3': ['gallery/Revenue&profitability.png','gallery/Financial planning.png','gallery/Sales & Operations planning.png','gallery/Inventory Perfomance.png','gallery/Product Sales Perfomance.png','gallery/Human ressources.png'],
+      'project-4': ['gallery/Data Cleaning.png','gallery/Attributes analysis.png','gallery/Model Parameters.png','gallery/Model Validation.png','gallery/Pipeline.png','gallery/Model Evaluation.png'],
+      'project-5': ['gallery/Mongodb.png','gallery/Mysql.png'],
+      'project-6': ['gallery/bluesky developer.png','gallery/natural language processing.png','gallery/website for RSE.png','gallery/streamlit.png']
+    };
+
+   const PROJECT_CAPTIONS = {}
+    
+
+    const TABLEAU_LINK = "https://public.tableau.com/app/profile/yourname/viz/TableauProjects";
+
+    function filenameToTitle(src){
+      try {
+        const file = src.split('/').pop().split('?')[0];
+        const name = file.replace(/\.[^/.]+$/, '');
+        return name.replace(/[_\-]+/g, ' ').replace(/\b[a-z]/g, ch => ch.toUpperCase());
+      } catch(e){ return src; }
+    }
+
+    const iconBar = root.querySelector('#project-icon-bar');
+    const projectContent = root.querySelector('#project-content');
+    const lightbox = root.querySelector('#lightbox');
+    const lightboxBg = root.querySelector('#lightbox-bg');
+    const lightboxImg = root.querySelector('#lightbox-img');
+    const lbClose = root.querySelector('#lightbox-close');
+    const captionBox = root.querySelector('.lightbox-caption');
+
+    function buildGrid(images){
+      const wrapper = document.createElement('div');
+      wrapper.className = 'project-grid-wrapper';
+      const grid = document.createElement('div');
+      grid.className = 'project-grid';
+
+      images.forEach(src => {
+        const item = document.createElement('div');
+        item.className = 'project-item';
+        item.dataset.src = src;
+
+        const img = document.createElement('img');
+        img.src = src; img.alt = '';
+
+        const overlay = document.createElement('div'); overlay.className = 'overlay';
+        const title = document.createElement('div'); title.className = 'overlay-title';
+        title.textContent = filenameToTitle(src);
+        const btns = document.createElement('div'); btns.className = 'overlay-buttons';
+        const detail = document.createElement('button'); detail.className = 'overlay-btn detail-btn'; detail.type='button'; detail.textContent = 'Detail';
+        const dl = document.createElement('button'); dl.className = 'overlay-btn download-btn'; dl.type='button';
+
+        const activeProject = root.querySelector('.icon-wrap.active')?.dataset.project;
+        dl.textContent = (activeProject === 'project-2') ? 'View Online' : 'Download Demo';
+
+        btns.appendChild(detail); btns.appendChild(dl);
+        overlay.appendChild(title); overlay.appendChild(btns);
+
+        item.appendChild(img); item.appendChild(overlay);
+        grid.appendChild(item);
+      });
+      wrapper.appendChild(grid);
+      return wrapper;
+    }
+
+    function loadProject(id){
+      const gallery = PROJECT_GALLERIES[id] || [];
+      projectContent.innerHTML = '';
+      if (gallery.length === 0) {
+        projectContent.innerHTML = '<p style="text-align:center;color:#666">此项目尚无图片。</p>';
+        return;
+      }
+      projectContent.appendChild(buildGrid(gallery));
+    }
+
+    iconBar.addEventListener('click', (e) => {
+      const wrap = e.target.closest('.icon-wrap');
+      if (!wrap) return;
+      root.querySelectorAll('.icon-wrap').forEach(w=>w.classList.remove('active'));
+      wrap.classList.add('active');
+      loadProject(wrap.dataset.project);
+    });
+
+    const first = root.querySelector('.icon-wrap');
+    if (first) { first.classList.add('active'); loadProject(first.dataset.project); }
+
+    projectContent.addEventListener('click', (e) => {
+      const t = e.target;
+      if (t.classList.contains('detail-btn')) {
+        const item = t.closest('.project-item'); if (!item) return;
+        openLightbox(item.dataset.src); return;
+      }
+      if (t.classList.contains('download-btn')) {
+        const item = t.closest('.project-item'); if (!item) return;
+        const activeProject = root.querySelector('.icon-wrap.active')?.dataset.project;
+        if (activeProject === 'project-2') {
+          window.open(TABLEAU_LINK, '_blank'); return;
+        }
+        const src = item.dataset.src;
+        const a = document.createElement('a'); a.href = src; a.download = src.split('/').pop();
+        document.body.appendChild(a); a.click(); a.remove(); return;
+      }
+    });
+
+    function openLightbox(src){
+      lightboxImg.src = src;
+      captionBox.textContent = PROJECT_CAPTIONS[src] || "这里可以放你的说明文字。";
+      lightbox.style.display = 'flex';
+      lightbox.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox(){
+      lightboxImg.src = '';
+      captionBox.textContent = '';
+      lightbox.style.display = 'none';
+      lightbox.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+    }
+
+    lightboxBg.addEventListener('click', closeLightbox);
+    lbClose.addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && lightbox.style.display === 'flex') closeLightbox(); });
+  })();
+</script>
+<script>
+/* 放在 lightbox 脚本之前：确保全局可访问 */
+window.PROJECT_CAPTIONS = {
+  "gallery/Revenue&profitability.png": `
+<ul>
+  <li><strong>Context:</strong> Designed for executive-level monitoring of revenue streams and profitability across regions and product lines.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>Dynamic KPI cards with date selectors.</li>
+      <li>Profit decomposition templates and drill-through.</li>
+    </ul>
+  </li>
+  <li><strong>Techniques:</strong>
+    <ul>
+      <li>Power Query ETL patterns and advanced DAX measures.</li>
+      <li>Performance optimizations (query folding, incremental refresh).</li>
+    </ul>
+  </li>
+</ul>
+`,
+'gallery/Mongodb.png':`<ul>
+  <li><strong>Context:</strong> Developed a mini e-commerce backend project to demonstrate essential online retail functionalities such as product management, shopping cart, and transactional order processing. The goal was to highlight MongoDB’s advanced database capabilities in a realistic use case.</li>
+  <li><strong>Results:</strong>
+    <ul>
+      <li>Built a working backend that supports product CRUD and secure checkout with transactions to prevent overselling.</li>
+      <li>Implemented sales analytics using aggregation pipelines and embedded arrays.</li>
+      <li>Successfully deployed with MongoDB Atlas and Node.js/Express, optionally connected to React/Vue frontend.</li>
+    </ul>
+  </li>
+  <li><strong>Reusability:</strong>
+    <ul>
+      <li>Extendable into a full-stack demo with frontend features.</li>
+      <li>Reusable template for small marketplaces, inventory systems, or MongoDB training materials.</li>
+    </ul>
+  </li>
+  <li><strong>Technologies:</strong>
+    <ul>
+      <li>Node.js / Express backend</li>
+      <li>MongoDB Atlas + Mongoose</li>
+      <li>JWT Authentication</li>
+      <li>React/Vue frontend (optional)</li>
+      <li>Deployment on Vercel/Heroku</li>
+    </ul>
+  </li>
+</ul>
+`
+,
+"gallery/Mysql.png": `
+<ul>
+  <li><strong>Context:</strong> The E-vent Database Project is a comprehensive relational database schema designed for a fictional event management company named "E-vent." It captures all aspects of event planning and execution, including clients, participants, suppliers, employees, programs, invoices, payments, and contracts. The database serves as a centralized system to manage event details, schedules, budgets, billing, and participant tracking.</li>
+  <li><strong>Outcomes:</strong>
+    <ul>
+      <li>A fully structured relational database with 21 tables, 5 views, stored procedures, and triggers.</li>
+      <li>Sample data for testing and demonstration.</li>
+      <li>A clear ER diagram (event.mwb) for visualization in MySQL Workbench.</li>
+      <li>Functional features such as budget tracking, invoice management, participant registration, and conflict detection.</li>
+    </ul>
+  </li>
+  <li><strong>Reusable Components:</strong>
+    <ul>
+      <li>Modular Table Design: The separation of individual and corporate clients/suppliers allows flexible extension.</li>
+      <li>Views for Reporting: Pre-built views like budget_superieur_cout and facture_unpaied can be adapted for similar business intelligence needs.
+</li>
+<li>Stored Procedures: Examples like available_programme and update_client_contact_info demonstrate reusable logic for common operations.</li>
+   <li>Triggers for Automation: Triggers like update_event_cost_add and check_participant_capacity ensure data integrity and automate cost updates.</li>
+</ul>
+  </li>
+  <li><strong>Technologies Used:</strong>
+    <ul>
+      <li>Database: MySQL</li>
+      <li>Modeling Tool: MySQL Workbench (.mwb file)</li>
+      <li>Scripts: SQL for schema creation (DDL) and data insertion (DML)</li>
+      <li>Concepts: Relational database design, views, stored procedures, triggers, ER modeling</li>
+    </ul>
+  </li>
+</ul>
+`
+,
+'gallery/bluesky developer.png': `<ul>
+  <li><strong>Context / Contexte :</strong> 
+    <ul>
+      <li>Initiated a data analysis project on <em>skeets</em> (posts) from the Bluesky social network.</li>
+      <li>Focus: popularity of pets such as dogs, cats, birds, fish, hamsters, rabbits, and reptiles.</li>
+      <li>Objectif : explorer la popularité des animaux de compagnie sur Bluesky à travers les mots-clés et hashtags.</li>
+    </ul>
+  </li>
+
+  <li><strong>Key Research Question / Problématique :</strong> 
+    <ul>
+      <li>"Which animals are the most popular on Bluesky, and how does their popularity evolve over time?"</li>
+      <li>"Quels sont les animaux les plus populaires sur Bluesky et comment leur popularité évolue-t-elle dans le temps ?"</li>
+    </ul>
+  </li>
+
+  <li><strong>Main Results / Principaux résultats :</strong>
+    <ul>
+      <li>Birds, dogs, and cats dominate mentions, while reptiles and hamsters appear less but still significant.</li>
+      <li>Hashtags like <code>#art</code>, <code>#furryart</code>, and <code>#photography</code> are strongly associated with pets, often in creative/visual contexts.</li>
+      <li>Reptiles show the highest engagement (avg. ~11.9 likes/post), outperforming cats and dogs.</li>
+      <li>Sentiment analysis: ~47% positive, 31% neutral, 22% negative posts about pets.</li>
+      <li>Événements spéciaux (ex. Journée mondiale du chien/chat) génèrent des pics d’activité et d’intérêt.</li>
+    </ul>
+  </li>
+
+  <li><strong>Reusable Insights / Points réutilisables :</strong>
+    <ul>
+      <li>Keyword/hashtag monitoring framework can be reused for trend detection in other topics.</li>
+      <li>Community & influencer mapping approach applicable to other domains (sports, politics, culture).</li>
+      <li>Méthodologie adaptable pour analyser d’autres réseaux sociaux (Twitter, Mastodon, etc.).</li>
+    </ul>
+  </li>
+
+  <li><strong>Techniques Used / Techniques utilisées :</strong>
+    <ul>
+      <li>Apache Spark + Python libraries for large-scale text and sentiment analysis.</li>
+      <li>MongoDB for structured storage of skeets, hashtags, mentions, and engagement metrics.</li>
+      <li>Natural Language Processing (NLP) to detect entities, hashtags, and classify sentiments.</li>
+      <li>Visualisation des tendances via agrégations temporelles et graphiques analytiques.</li>
+    </ul>
+  </li>
+
+  <li><strong>Limitations / Contraintes :</strong>
+    <ul>
+      <li>High data volume: ~5000 skeets retrieved within seconds made temporal analysis difficult.</li>
+      <li>Biases in language/region detection due to incomplete metadata.</li>
+      <li>Sentiment analysis models may miss nuances, leading to partial misclassification.</li>
+      <li>Contraintes organisationnelles liées aux examens et aux stages.</li>
+    </ul>
+  </li>
+
+  <li><strong>Conclusion :</strong>
+    <ul>
+      <li>The project successfully highlighted pet popularity patterns and community dynamics on Bluesky.</li>
+      <li>Offre une première exploration des comportements et interactions autour des animaux de compagnie sur Bluesky.</li>
+      <li>Future work: improve handling of large-scale streaming data and refine NLP models for multilingual sentiment detection.</li>
+    </ul>
+  </li>
+</ul>`,
+'gallery/natural language processing.png':`<ul>
+  <li><strong>Context:</strong> This project analyzes Donald Trump’s influence on Twitter, focusing on the strategies and linguistic patterns that made his communication so impactful. The objective is to uncover how Trump used Twitter to engage the public, shape political discourse, and amplify his presence.</li>
+  
+  <li><strong>Outcomes:</strong>
+    <ul>
+      <li>Identified engagement drivers such as tweet types (originals vs retweets), timing, and devices used.</li>
+      <li>Highlighted recurring themes, slogans, and linguistic markers that defined Trump’s communication style.</li>
+      <li>Mapped correlations between tweet content and major political or social events.</li>
+      <li>Uncovered sentiment dynamics (positive, negative, neutral) and their evolution over time.</li>
+    </ul>
+  </li>
+  
+  <li><strong>Reusable insights:</strong>
+    <ul>
+      <li>Methodological pipeline for text cleaning, preprocessing, and normalization (hashtags, mentions, URLs).</li>
+      <li>Framework for engagement modeling combining metadata (likes, retweets) with semantic content.</li>
+      <li>Topic modeling templates (LDA, LSA) applicable to political, marketing, or media datasets.</li>
+      <li>Clustering and classification workflows reusable for other social media datasets.</li>
+    </ul>
+  </li>
+  
+  <li><strong>Techniques & Methods:</strong>
+    <ul>
+      <li>Text preprocessing: tokenization, lemmatization, stopword removal, NER & POS tagging.</li>
+      <li>Vectorization: TF-IDF, n-grams, and word embeddings (Word2Vec).</li>
+      <li>Topic modeling: Latent Semantic Analysis (LSA) and Latent Dirichlet Allocation (LDA).</li>
+      <li>Unsupervised learning: clustering (K-means, hierarchical).</li>
+      <li>Supervised classification: sentiment analysis, engagement prediction.</li>
+      <li>Temporal analysis: frequency trends, activity peaks, correlation with external events.</li>
+    </ul>
+  </li>
+</ul>`,
+'gallery/website for RSE.png':`<ul>
+  <li><strong>Context:</strong> This project was developed as an interactive website to present a CSR-themed treasure hunt during the Business Creation Fair. The main goal was to design a user-friendly platform that guides participants through stands, riddles, and online submission.</li>
+  
+  <li><strong>Outcomes:</strong>
+    <ul>
+      <li>Created a fully structured website to support a gamified learning experience.</li>
+      <li>Implemented a clear navigation system allowing smooth progression between stands.</li>
+      <li>Integrated interactive charade sections and a submission form for participant tracking.</li>
+      <li>Delivered a responsive interface accessible on both desktop and mobile devices.</li>
+    </ul>
+  </li>
+  
+  <li><strong>Reusable insights:</strong>
+    <ul>
+      <li>The website structure (multi-stand game logic) can be adapted for other educational or corporate events.</li>
+      <li>Gamification modules can be reused for quizzes, treasure hunts, or interactive workshops.</li>
+      <li>Form integration with online databases can be applied to other survey or registration platforms.</li>
+    </ul>
+  </li>
+  
+  <li><strong>Techniques & Skills:</strong>
+    <ul>
+      <li>Front-end development using <em>HTML5, CSS3, JavaScript</em>.</li>
+      <li>Responsive design techniques to ensure accessibility across devices.</li>
+      <li>Gamification design for interactive progression through the stands.</li>
+      <li>Form integration with external platforms for data collection and validation.</li>
+      <li>Clean UI/UX design focusing on clarity, simplicity, and engagement.</li>
+    </ul>
+  </li>
+</ul>`,
+'gallery/streamlit.png':`<ul>
+  <li><strong>Context:</strong> This project was developed in the framework of the Open Data University challenge on cycling infrastructures in Grenoble. Beyond the data analysis and dashboard creation, a key component was the design of a collaborative website to present the results and publish them on GitHub Pages.</li>
+  
+  <li><strong>Outcomes:</strong>
+    <ul>
+      <li>Developed a structured project website to host dashboards, documentation, and deliverables.</li>
+      <li>Implemented Git and GitHub for version control, project management, and collaborative editing.</li>
+      <li>Created a clear project workflow (CRISP-DM) supported by structured repositories and documentation pages.</li>
+      <li>Published an online dashboard accessible to external stakeholders through GitHub Pages.</li>
+    </ul>
+  </li>
+  
+  <li><strong>Reusable insights:</strong>
+    <ul>
+      <li>The project website structure can serve as a template for other academic or professional data-driven projects.</li>
+      <li>The GitHub repository model (issues, branches, wiki, and project boards) is reusable for collaborative team projects.</li>
+      <li>Integration of dashboards (Tableau, Power BI, or Streamlit) into static websites can be applied in future projects.</li>
+    </ul>
+  </li>
+  
+  <li><strong>Techniques & Skills:</strong>
+    <ul>
+      <li>Front-end development using <em>HTML5, CSS3, JavaScript</em> for clear and responsive project documentation.</li>
+      <li>Version control and collaboration with <em>Git & GitHub</em> (branching strategy, pull requests, conflict resolution).</li>
+      <li>Deployment and hosting with <em>GitHub Pages</em> for public access to project results.</li>
+      <li>Integration of visual dashboards and Jupyter Notebook outputs into a navigable website.</li>
+      <li>UI/UX design principles applied to educational and data-visualization contexts.</li>
+    </ul>
+  </li>
+</ul>`,
+'gallery/Dashboard For French Aviation.png':`<ul>
+  <li><strong> Context:</strong>
+    <ul>
+      <li>I was the sole architect and developer behind the creation of the first fully <strong>open-source strategic dashboard</strong> for the French air transport sector.</li>
+      <li>This initiative was commissioned by the <strong>French National Federation of Commercial Aviation (FNAM)</strong> to address a critical gap in the industry.</li>
+      <li>From conception to deployment, I independently managed the entire project lifecycle, encompassing data integration, modeling, and interactive dashboard development.</li>
+      <li>This pioneering tool consolidates disparate industry databases into a single source of truth, establishing a new standard for open-source, sector-wide business intelligence.</li>
+    </ul>
+  </li>
+  
+  <li><strong>Key Outcomes & Significance:</strong>
+    <ul>
+      <li><strong>A Pioneering Achievement:</strong> Delivered the industry's first comprehensive, open-source strategic dashboard, breaking down long-standing data silos.</li>
+      <li><strong>Centralized Decision-Making Platform:</strong> Provided FNAM leadership with an intuitive, real-time platform for performance analysis and evidence-based lobbying.</li>
+      <li><strong>Actionable Strategic Insights:</strong> Transformed complex, multi-source data into a clear visual narrative informing strategic priorities.</li>
+    </ul>
+  </li>
+  
+  <li><strong>Reusable Framework & Design Philosophy:</strong>
+    <ul>
+      <li><strong>Modular Dashboard Architecture:</strong> Five-tab structure (Overview, Traffic, Finance, Efficiency, Strategy) facilitating a top-down analytical journey.</li>
+      <li><strong>Scalable Data Model:</strong> Star-schema architecture organizing data along geographical, temporal, and operational dimensions.</li>
+      <li><strong>Advanced Visual Best Practices:</strong> Meticulously designed visualizations creating a reusable library of effective data communication techniques.</li>
+    </ul>
+  </li>
+  
+  <li><strong>🛠 Core Tableau & Data Visualization Expertise:</strong>
+    <ul>
+      <li><strong>Executive-Level Synthesis (Overview Tab):</strong>
+        <ul>
+          <li>KPI Cards with embedded Sparklines for instant performance status and trend analysis</li>
+          <li>Interactive, multi-layered maps with proportional symbols and dynamic scale-shifting</li>
+          <li>Horizontal bar charts for clear, ranked competitive analysis</li>
+        </ul>
+      </li>
+      <li><strong>Deep-Dive Analytical Modules (Traffic & Demand, Finance Tabs):</strong>
+        <ul>
+          <li>Highly interactive environments for autonomous data exploration</li>
+          <li>Sophisticated traffic distribution charts for market share visualization</li>
+        </ul>
+      </li>
+      <li><strong>Data Architecture & Performance:</strong>
+        <ul>
+          <li>Star-schema data model ensuring high performance and data integrity</li>
+          <li>Seamless integration of fact tables with multiple dimensions for interactive capabilities</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>`,
+'gallery/Advanced Interactive Map Visualization.png':`<ul>
+  <li><strong>Advanced Interactive Map Visualization (Global Map):</strong>
+    <ul>
+      <li><strong>Complex Geospatial Data Processing:</strong> Engineered a sophisticated data pipeline to clean, validate, and process coordinate data for <strong>1,700+ global flight routes</strong>, ensuring precise geographical representation.</li>
+      <li><strong>Advanced Arc Visualization:</strong> Implemented <strong>great-circle arc algorithms</strong> to simulate real flight paths instead of straight lines, creating a more accurate and visually engaging representation of global air traffic flows.</li>
+      <li><strong>High-Density Information Display:</strong> Designed an intuitive hover-triggered tooltip system that reveals comprehensive flight data including:
+        <ul>
+          <li>Departure and arrival cities</li>
+          <li>Aircraft movements and types</li>
+          <li>Flight capacity (available seats)</li>
+          <li>Actual traffic (passengers carried)</li>
+          <li>Load factor percentages</li>
+        </ul>
+      </li>
+      <li><strong>Big Data Optimization:</strong> Developed efficient data aggregation and rendering techniques to handle the substantial computational requirements of visualizing complex route networks in real-time.</li>
+      <li><strong>Immersive User Experience:</strong> Created an exploratory environment where users can intuitively understand air traffic volume and distribution patterns through visual immersion rather than traditional tabular data.</li>
+    </ul>
+  </li>
+</ul>`,
+'gallery/Interactive Trend Analysis Laboratory.png':`<ul>
+    <li><strong> Interactive Trend Analysis Laboratory (Analysis Sub-tab):</strong>
+        <ul>
+            <li><strong>User-Driven Analytical Framework:</strong> Designed a deliberately blank-slate interface that empowers users to initiate custom comparative analyses by selecting specific flight routes, transforming the dashboard from a static report into an interactive discovery tool.</li>
+            <li><strong>Multi-Variable Temporal Analysis:</strong> Engineered a dynamic line chart system capable of visualizing multiple key performance indicators (available seats, aircraft capacity, passenger count, load factor) against a temporal axis, enabling deep trend analysis.</li>
+            <li><strong>Adaptive Time Granularity:</strong> Implemented interactive filters allowing seamless switching between different time granularities (year, month), facilitating both high-level trend spotting and detailed periodic analysis.</li>
+            <li><strong>Precision Data Point Interaction:</strong> Developed an intuitive hover-detection system that reveals exact metric values at specific data points, providing users with precise numerical insights while maintaining clean visual layouts.</li>
+            <li><strong>Comparative Analytics Engine:</strong> Built robust data processing capabilities to handle simultaneous visualization of multiple routes, enabling direct performance comparisons and pattern recognition across different market segments.</li>
+        </ul>
+    </li>
+</ul>`,
+'gallery/Real Time Financial Dashboard.png':`<ul>
+    <li><strong> Real-Time Financial Data Integration System (Financial Situation Tab):</strong>
+        <ul>
+            <li><strong>Automated API Data Pipeline:</strong> Established a sophisticated real-time data pipeline that automatically fetches critical financial indicators (Euro/USD exchange rate, crude oil prices, kerosene prices) from external financial APIs at scheduled intervals.</li>
+            <li><strong>Google Sheets as Data Middleware:</strong> Implemented Google Sheets as an innovative middleware solution, where API data is automatically populated and structured, serving as a reliable and accessible data bridge between external sources and Tableau.</li>
+            <li><strong>Real-Time Tableau Data Stream:</strong> Configured Tableau to maintain a live connection to the Google Sheets data source, enabling seamless automatic refresh of financial indicators without manual intervention.</li>
+            <li><strong>Dynamic KPI Card System:</strong> Designed intuitive KPI cards that display real-time financial metrics, providing instant visibility into critical profitability factors affecting the airline industry.</li>
+            <li><strong>Interactive Financial Benchmarking Tables:</strong> Created sortable financial tables displaying European traffic benchmarks and aggregated airline financial statements (Revenue, EBITDA, Net Income, Operating Costs, Financial Debt), enabling quick comparative analysis.</li>
+            <li><strong>Automated Data Quality Controls:</strong> Built validation mechanisms to ensure data integrity throughout the pipeline, from API extraction to final visualization, maintaining reliable financial reporting.</li>
+        </ul>
+    </li>
+</ul>`,
+  /* 其他图片键值对按需添加，注意键与 project-item 的 data-src 完全一致 */
+  "gallery/Financial planning.png": `<ul>
+  <li><strong>Context:</strong> Combines historical actuals with forecast scenarios to support budget planning and executive sign-off workflows.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>Scenario toggles (base / best / worst) and switchable forecast horizons.</li>
+      <li>Variance analysis templates comparing plan vs actual with drill-down capability.</li>
+      <li>Export and snapshot capability for board reports.</li>
+    </ul>
+  </li>
+  <li><strong>Techniques demonstrated:</strong>
+    <ul>
+      <li>Time-intelligence in DAX (rolling totals, period-to-date, parallel period comparisons).</li>
+      <li>Parameterization and integration with external forecasting models (CSV/Excel connectors).</li>
+      <li>Design patterns for maintainable measure libraries.</li>
+    </ul>
+  </li>,
+</ul>`,
+  "gallery/Sales & Operations planning.png": `<ul>
+  <li><strong>Context:</strong> Aligns sales demand with production capacity and inventory planning to reduce stock-outs and overstock situations.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>Cross-functional KPIs (Sales vs Production vs Capacity) and gap analysis widgets.</li>
+      <li>What-if sliders for demand scenarios and capacity adjustments.</li>
+      <li>Product hierarchy drill-downs and top-N analysis for SKU prioritization.</li>
+    </ul>
+  </li>
+  <li><strong>Techniques demonstrated:</strong>
+    <ul>
+      <li>Complex relationships (many-to-many, role-playing date tables) and aggregated measures.</li>
+      <li>Use of bookmarks and buttons to create guided planning workflows.</li>
+      <li>Custom visuals for supply chain visualisation and anomaly highlighting.</li>
+    </ul>
+  </li>
+</ul>`,
+  "gallery/Inventory Perfomance.png": `<ul>
+  <li><strong>Context:</strong> Monitors inventory health, turnover, and carrying costs to optimize working capital and reorder decisions.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>Inventory aging and ABC classification templates.</li>
+      <li>Reorder-point alerts and visual signals for slow-moving stock.</li>
+      <li>Pre-built measures for days-of-stock and turnover ratios.</li>
+    </ul>
+  </li>
+  <li><strong>Techniques demonstrated:</strong>
+    <ul>
+      <li>Custom DAX for turnover and aging buckets, and conditional formatting for exceptions.</li>
+      <li>Efficient model design to handle high-cardinality SKU data.</li>
+      <li>Integration patterns for periodic snapshots and retained historical states.</li>
+    </ul>
+  </li>
+</ul>`,
+  "gallery/Product Sales Perfomance.png": `<ul>
+  <li><strong>Context:</strong> Gives product managers visibility into sales contribution, growth trends and channel performance for data-driven portfolio decisions.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>Top-N product ranking widgets with dynamic filters for geography/channel.</li>
+      <li>Cohort & lifecycle analysis templates for new product launches.</li>
+      <li>Decomposition trees and drill-through patterns for root-cause analysis.</li>
+    </ul>
+  </li>
+  <li><strong>Techniques demonstrated:</strong>
+    <ul>
+      <li>Dynamic ranking measures in DAX and context-aware slicers.</li>
+      <li>Use of bookmarks and report tooltips to surface additional insights without cluttering the canvas.</li>
+      <li>Visual design practices for clear comparison and trend interpretation.</li>
+    </ul>
+  </li>
+</ul>`,
+  "gallery/Human ressources.png": `<ul>
+  <li><strong>Context:</strong> Tracks workforce metrics such as headcount, turnover, diversity and engagement to support HR strategy and operational planning.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>Attrition dashboards with cohort and tenure analysis templates.</li>
+      <li>Headcount trend monitors and department-level drill-downs.</li>
+      <li>Configurable role-based filters and user-level security patterns for sensitive data.</li>
+    </ul>
+  </li>
+  <li><strong>Techniques demonstrated:</strong>
+    <ul>
+      <li>Data shaping in Power Query for HR datasets and sensitive field handling.</li>
+      <li>Advanced DAX ratios (turnover rate, hire-to-separation ratios) and rolling metrics.</li>
+      <li>Row-level security considerations and deployments for HR confidentiality.</li>
+    </ul>
+  </li>
+</ul>`
+};
+</script>
+<script>
+/* Append / create PROJECT_CAPTIONS and add Python project entries */
+window.PROJECT_CAPTIONS = window.PROJECT_CAPTIONS || {};
+
+/* 1. Data Cleaning */
+window.PROJECT_CAPTIONS['gallery/Data Cleaning.png'] = `
+<ul>
+  <li><strong>Context:</strong> End-to-end data cleaning pipeline used to standardize, validate and prepare raw logs and CSV exports for downstream modeling and reporting.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>Modular cleaning functions (null handling, type coercion, outlier winsorization) that can be imported into other projects.</li>
+      <li>Automated validation reports (row counts, schema diffs, sample anomaly checks).</li>
+      <li>Config-driven transforms (column maps and rules) for quick adaptation to new sources.</li>
+    </ul>
+  </li>
+  <li><strong>Techniques & tools:</strong>
+    <ul>
+      <li>Pandas for vectorized transforms and group-wise imputations.</li>
+      <li>Regex & dtype inference for parsing dirty text fields.</li>
+      <li>Unit tests for data contracts and small sample-based integration checks.</li>
+    </ul>
+  </li>
+</ul>
+`;
+
+/* 2. Attributes analysis (feature exploration & engineering) */
+window.PROJECT_CAPTIONS['gallery/Attributes analysis.png'] = `
+<ul>
+  <li><strong>Context:</strong> Exploratory and feature engineering notebook used to discover predictive signals and create robust attributes for ML models.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>Feature templates (binned numerical, categorical encoders, time-derived features) that plug directly into training pipelines.</li>
+      <li>Interactive EDA snippets for quick hypothesis testing (grouped summaries, pivoted views).</li>
+    </ul>
+  </li>
+  <li><strong>Techniques & tools:</strong>
+    <ul>
+      <li>pandas + numpy for feature ops; seaborn/matplotlib for distribution checks.</li>
+      <li>Target encoding, lag features, rolling aggregates for time-series contexts.</li>
+      <li>Documentation of feature importance experiments for reproducibility.</li>
+    </ul>
+  </li>
+</ul>
+`;
+
+/* 3. Model Parameters (hyperparameter tuning) */
+window.PROJECT_CAPTIONS['gallery/Model Parameters.png'] = `
+<ul>
+  <li><strong>Context:</strong> Notebook demonstrating systematic hyperparameter search and parameter management for repeatable model training.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>Config-driven parameter sets (YAML/JSON) enabling experiments to be re-run with identical settings.</li>
+      <li>Wrapper functions to run grid and randomized search and collect results to a summary table.</li>
+    </ul>
+  </li>
+  <li><strong>Techniques & tools:</strong>
+    <ul>
+      <li>Scikit-learn GridSearchCV / RandomizedSearchCV and Optuna for efficient hyperparameter optimization.</li>
+      <li>Cross-validation strategies and custom scorers for application-specific metrics.</li>
+      <li>Result logging for experiment tracking (CSV or MLflow friendly outputs).</li>
+    </ul>
+  </li>
+</ul>
+`;
+
+/* 4. Model Validation */
+window.PROJECT_CAPTIONS['gallery/Model Validation.png'] = `
+<ul>
+  <li><strong>Context:</strong> Validation suite that compares candidate models, checks for data leakage and verifies robustness across subpopulations.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>Standard metric dashboards (ROC/AUC, PR, confusion matrices, calibration plots).</li>
+      <li>Segmented evaluation templates to detect performance drift in groups.</li>
+    </ul>
+  </li>
+  <li><strong>Techniques & tools:</strong>
+    <ul>
+      <li>scikit-learn metrics, calibration curves and permutation importance.</li>
+      <li>Bootstrap confidence intervals and holdout/backtest strategies for time-aware datasets.</li>
+      <li>Comparison reports that can be exported for stakeholder review.</li>
+    </ul>
+  </li>
+</ul>
+`;
+
+/* 5. Pipeline (productionizing models & ETL) */
+window.PROJECT_CAPTIONS['gallery/Pipeline.png'] = `
+<ul>
+  <li><strong>Context:</strong> Example production pipeline connecting data ingestion, cleaning, model training and artifact publishing.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>Pipeline templates for batch scoring and retraining (CLI friendly).</li>
+      <li>Artifact management (model serialization, versioning, and schema snapshots).</li>
+      <li>Health checks and lightweight monitoring hooks for data drift.</li>
+    </ul>
+  </li>
+  <li><strong>Techniques & tools:</strong>
+    <ul>
+      <li>Dag orchestration concepts (Airflow/Prefect style), containerized tasks and cron-based scheduling.</li>
+      <li>Use of MLflow / joblib for model registry and reproducible deployment artifacts.</li>
+      <li>CI patterns for tests and linting to ensure pipeline reliability.</li>
+    </ul>
+  </li>
+</ul>
+`;
+
+/* 6. Model Evaluation (interpretability & monitoring) */
+window.PROJECT_CAPTIONS['gallery/Model Evaluation.png'] = `
+<ul>
+  <li><strong>Context:</strong> Evaluation notebook focusing on model explainability, business impact assessment and post-deploy monitoring.</li>
+  <li><strong>Reusable features:</strong>
+    <ul>
+      <li>SHAP/Permutation-based explanation templates for feature attribution.</li>
+      <li>Evaluation cards for business KPIs and example-driven failure analysis.</li>
+      <li>Monitoring snippets that compute periodic data and prediction statistics for drift detection.</li>
+    </ul>
+  </li>
+  <li><strong>Techniques & tools:</strong>
+    <ul>
+      <li>SHAP and partial dependence plots for interpretable ML insights.</li>
+      <li>Statistical tests for distribution shift and simple alert thresholds for ops.</li>
+      <li>Guidance on retraining cadence and rollback strategies.</li>
+    </ul>
+  </li>
+</ul>
+`;
+
+/* Log to confirm entries set */
+console.log('Python project captions injected:', Object.keys(window.PROJECT_CAPTIONS).filter(k => k.includes('Data Cleaning') || k.includes('Model') || k.includes('Pipeline')));
+</script>
+<script>
+/* ===== Scoped Lightbox JS (独立函数名，避免覆盖原来 openLightbox) ===== */
+(function(){
+  // root 可替换为 document.body 如果你希望全页通用
+  const root = document.getElementById('project-page') || document.body;
+
+  const ppLightbox = (root.querySelector) ? root.querySelector('#pp-lightbox') : document.getElementById('pp-lightbox');
+  const ppBg = (root.querySelector) ? root.querySelector('#pp-lightbox-bg') : document.getElementById('pp-lightbox-bg');
+  const ppImg = (root.querySelector) ? root.querySelector('#pp-lightbox-img') : document.getElementById('pp-lightbox-img');
+  const ppCaption = (root.querySelector) ? root.querySelector('#pp-lightbox-caption') : document.getElementById('pp-lightbox-caption');
+  const ppClose = (root.querySelector) ? root.querySelector('#pp-lightbox-close') : document.getElementById('pp-lightbox-close');
+
+  // Open: src = image path, captionHTML = string containing HTML (can include <ul><li>...)
+  function openProjectLightbox(src, captionHTML = '') {
+    if(!ppLightbox) return;
+    ppImg.src = src || '';
+    ppCaption.innerHTML = captionHTML || '';
+    ppLightbox.style.display = 'flex';
+    ppLightbox.setAttribute('aria-hidden','false');
+    // prevent page scroll while open
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    // focus for accessibility
+    ppClose.focus();
+  }
+
+  function closeProjectLightbox() {
+    if(!ppLightbox) return;
+    ppImg.src = '';
+    ppCaption.innerHTML = '';
+    ppLightbox.style.display = 'none';
+    ppLightbox.setAttribute('aria-hidden','true');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  }
+
+  // events
+  if(ppBg) ppBg.addEventListener('click', closeProjectLightbox);
+  if(ppClose) ppClose.addEventListener('click', closeProjectLightbox);
+  if(ppLightbox) {
+    ppLightbox.addEventListener('click', (e) => {
+      if (e.target === ppLightbox) closeProjectLightbox();
+    });
+  }
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape' && ppLightbox && ppLightbox.style.display === 'flex') closeProjectLightbox();
+  });
+
+  // expose functions to window so your other code can call them:
+  window.openProjectLightbox = openProjectLightbox;
+  window.closeProjectLightbox = closeProjectLightbox;
+
+  // OPTIONAL: If your project grid uses .detail-btn and .project-item dataset.src,
+  // you can auto-bind here (safe because selectors are scoped to #project-page if present)
+  const projectContent = root.querySelector ? root.querySelector('#project-content') : document.getElementById('project-content');
+  if (projectContent) {
+    projectContent.addEventListener('click', (e) => {
+      const t = e.target;
+      if (t.classList.contains('detail-btn')) {
+        const item = t.closest('.project-item');
+        if (!item) return;
+        // Use your PROJECT_CAPTIONS mapping (must contain HTML strings)
+        const src = item.dataset.src || item.getAttribute('data-src') || '';
+        const captionHTML = (window.PROJECT_CAPTIONS && window.PROJECT_CAPTIONS[src]) ? window.PROJECT_CAPTIONS[src] : '';
+        openProjectLightbox(src, captionHTML);
+      }
+    });
+  }
+})();
+</script>
+  </div>
+</section>
+
+
+<!-- ====== Contact Section ====== -->
+<section id="contact-page">
+  <div class="contact-frame">
+    <h2 class="contact-title" data-translate="contact-title">Contact</h2>
+
+    <div class="contact-content">
+      <!-- 左边证件照片 -->
+      <div class="contact-photo small">
+        <img src="image/id photo.jfif" alt="ID Photo">
+      </div>
+
+      <!-- 右边生活照 -->
+      <div class="contact-photo">
+        <img src="image/contact.png" alt="Casual Photo">
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* Contact section 基础样式 */
+#contact-page {
+  position: relative;
+  z-index: 10; /* 保证在背景之上 */
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 40px;
+  background: transparent;
+}
+
+/* 标题样式和 My Projects 一致 */
+.contact-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  font-family: Arial, sans-serif;
+  color: #000;
+  text-align: center;
+}
+
+/* 内容区：左右两张照片并排，居中 */
+.contact-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px; /* 两张照片之间的间距 */
+  flex-wrap: wrap; /* 小屏幕自动换行 */
+  z-index: 20; /* 再确保图片浮在上层 */
+}
+
+/* 照片样式 */
+.contact-photo img {
+  max-width: 220px;
+  height: auto;
+  border-radius: 0; /* 不要圆角 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* 左边证件照更小 */
+.contact-photo.small img {
+  max-width: 150px;
+}
+</style>
+  <script>
+    // 语言切换功能
+document.addEventListener('DOMContentLoaded', function() {
+  const langOptions = document.querySelectorAll('.lang-option');
+  let currentLang = 'en'; // 默认英语
+  
+  // 语言资源
+  const translations = {
+    'en': {
+ // 项目部分
+           'project-home': 'Home',
+      'project-tableau': 'Tableau',
+      'project-powerbi': 'Power BI',
+      'project-python': 'Python',
+      'project-database': 'Database',
+      'project-web': 'Web',
+      'project-detail-btn': 'Detail',
+      'project-download-btn': 'Download Demo',
+// 证书部分
+      'cert-google-analytics': 'Certificate 1: Google Analytics',
+          // 经验部分 - 便利贴1
+      // 经验部分 - 便利贴1 (修复HTML格式)
+      'exp1-title': 'Data & Business Intelligence Analyst',
+      'exp1-company': 'Fédération Nationale de l\'Aviation et de ses Métiers',
+      'exp1-meta': '04/2025 - 09/2025 · Paris, France',
+      'exp1-front-title': 'Data & Business Intelligence Analyst',
+      'exp1-front-company': 'Fédération Nationale de l\'Aviation et de ses Métiers',
+      'exp1-front-dates': '04/2025 - 09/2025',
+      'exp1-front-location': 'Paris, France',
+      'exp1-back-1': '<strong>Conducted strategic sector analyses:</strong> monitored regulatory and policy changes, evaluated impacts on industry competitiveness.',
+      'exp1-back-2': '<strong>Consolidated insights:</strong> communicated findings to executive stakeholders to support decision-making.',
+      'exp1-back-3': '<strong>Designed and implemented a BI strategy:</strong> defined strategic framework and business requirements.',
+      'exp1-back-4': '<strong>Developed, deployed, and published an interactive Tableau dashboard:</strong> published interactive dashboard on the FNAM official website with advanced interactive features to enhance data comprehension and support decision-making.',
+      'exp1-back-5': '<strong>Performed data valorization and predictive modeling:</strong> conducted prospective studies and implemented statistical and economic models to anticipate traffic trends, producing strategic analyses to guide member decisions.',
+      'exp1-back-6': '<strong>Automated data processes:</strong> created scripts and workflows to ensure reliable data collection, processing, and updates.',
+      'exp1-back-7': '<strong>Promoted data literacy:</strong> authored user guides and conducted webinars to train internal and external teams and members.',
+          
+        // 经验部分 - 便利贴2
+      'exp2-title': 'Master\'s in Information Systems Management, specializing in Data Intelligence (Big Data)',
+      'exp2-company': 'Université Grenoble Alpes/Grenoble IAE',
+      'exp2-meta': '09/2023-10/2025 · Grenoble, France',
+      'exp2-front-title': 'Master\'s in Information Systems Management, specializing in Data Intelligence (Big Data)',
+      'exp2-front-company': 'Université Grenoble Alpes/Grenoble IAE',
+      'exp2-front-dates': '09/2023-10/2025 · Grenoble, France',
+      'exp2-back-1': '<strong>Core Courses:</strong>',
+      'exp2-course-1': 'Data Mining & Predictive Analytics',
+      'exp2-course-2': 'Big Data Management & Cloud Computing',
+      'exp2-course-3': 'Business Intelligence & Data Visualization',
+      'exp2-course-4': 'Machine Learning & AI Applications',
+      'exp2-course-5': 'Information Systems Strategy & Project Management',
+      'exp2-course-6': 'Database Design & SQL Programming',
+      'exp2-course-7': 'Agile Project Management & Scrum Methodology',
+      'exp2-course-8': 'Recette & Quality Assurance for IT Projects',
+      'exp2-course-9': 'Risk Management & IT Governance',
+      'exp2-back-2': '<strong>Skills Developed:</strong>',
+      'exp2-skill-1': 'Analyzing complex datasets and deriving actionable insights',
+      'exp2-skill-2': 'Building interactive dashboards and data visualizations',
+      'exp2-skill-3': 'Applying machine learning models to real-world business problems',
+      'exp2-skill-4': 'Implementing data pipelines and cloud-based solutions',
+      'exp2-skill-5': 'Strategic decision-making based on quantitative analysis',
+      'exp2-skill-6': 'Collaborating effectively in data-driven project teams',
+
+       // 经验部分 - 便利贴3
+      'exp3-title': 'Data Analyst',
+      'exp3-company': 'Logic2profit',
+      'exp3-meta': '04/2024-08/2024 · Rouen, France',
+      'exp3-front-title': 'Data Analyst',
+      'exp3-front-company': 'Logic2profit',
+      'exp3-front-dates': '04/2024-08/2024 · Rouen, France',
+      'exp3-back-1': '<strong>Full BI Project Lifecycle: </strong>',
+      'exp3-back-1-1': 'requirements analysis, data modeling, data quality management, data warehouse design and construction, database updates and maintenance.',
+      'exp3-back-2': '<strong>Supported project management:</strong>',
+      'exp3-back-2-1': 'Assisted industrial SME clients in their digital transformation by integrating, harmonizing, and analyzing data from multiple systems (CRM, ERP, MRP).',
+      'exp3-back-2-2': 'Developed interactive dashboards and implemented BI performance indicators to enhance operational insights.',
+      'exp3-back-2-3': 'Prepared deliverables and coordinated with stakeholders to ensure alignment with business objectives',
+      'exp3-back-3': '<strong>Contributed to BI governance:</strong>',
+      'exp3-back-3-1': 'monitored system performance, managed deliveries, analyzed and resolved data anomalies, and implemented corrective and evolutionary developments to maintain data quality and consistency.',
+      'exp3-back-3-2': 'Documented data processes and improvement workflows to support knowledge sharing and process standardization.',
+      
+      // 经验部分 - 便利贴4
+      'exp4-title': 'Bachelor\'s in French language and literature Bachelor\'s in Information Systems Management (Double Degree)',
+      'exp4-company': 'Shanghai International Studies University',
+      'exp4-meta': '09/2019-06/2023 · Shanghai, China',
+      'exp4-front-title': 'Bachelor\'s in French language and literature Bachelor\'s in Information Systems Management (Double Degree)',
+      'exp4-front-company': 'Shanghai International Studies University',
+      'exp4-front-dates': '09/2019-06/2023 · Shanghai, China',
+      'exp4-back-1': '<strong>Core Courses:</strong>',
+      'exp4-course-1': 'Advanced French Language & Communication',
+      'exp4-course-2': 'French Literature: Classical & Modern',
+      'exp4-course-3': 'French Cultural Studies & History',
+      'exp4-course-4': 'Translation & Interpretation Techniques',
+      'exp4-course-5': 'Comparative Literature & Linguistics',
+      'exp4-course-6': 'Introduction to Information Systems',
+      'exp4-course-7': 'Database Management & SQL Programming',
+      'exp4-course-8': 'Business Intelligence & Data Analysis',
+      'exp4-course-9': 'Systems Analysis & Design',
+      'exp4-course-10': 'Project Management & IT Governance',
+      'exp4-back-2': '<strong>Skills Developed:</strong>',
+      'exp4-skill-1': 'Advanced proficiency in French reading, writing, and oral communication',
+      'exp4-skill-2': 'Literary analysis and critical thinking in cross-cultural contexts',
+      'exp4-skill-3': 'Translation and interpretation between French and native language',
+      'exp4-skill-4': 'Designing and managing information systems',
+      'exp4-skill-5': 'Data analysis and business intelligence insights',
+      'exp4-skill-6': 'Database creation, querying, and maintenance',
+      'exp4-skill-7': 'Project planning and IT project execution',
+      'exp4-skill-8': 'Cross-disciplinary problem solving combining language and tech skills',
+      
+      // 经验部分 - 便利贴5
+      'exp5-title': 'IT Business Partner',
+      'exp5-company': 'The Walt Disney Company',
+      'exp5-meta': '09/2022-09/2023 · Shanghai, China',
+      'exp5-front-title': 'IT Business Partner',
+      'exp5-front-company': 'The Walt Disney Company',
+      'exp5-front-dates': '09/2022-09/2023 · Shanghai, China',
+      'exp5-back-1': '<strong>IT Project Management:</strong>',
+      'exp5-back-1-1': 'Data management and administration on the ERP, optimization of information flows, ensuring data quality, and updating and maintaining databases.',
+      'exp5-back-2': '<strong>Project Management Support:</strong>',
+      'exp5-back-2-1': 'Customer data analysis (profiling, purchasing behavior, engagement).',
+      'exp5-back-2-2': 'Development of CRM indicators and dashboards.',
+      'exp5-back-2-3': 'Implementation of new multi-platform information systems.',
+      'exp5-back-3': '<strong>Project Monitoring and Optimization:</strong>',
+      'exp5-back-3-1': 'Testing, user support, performance tracking, system improvements.',
+      'exp5-back-3-2': 'Process documentation.',
+      'exp5-back-3-3': 'Collaboration with external IT partners.',
+      
+      // 经验部分 - 便利贴6
+      'exp6-title': 'IT Business Manager',
+      'exp6-company': 'Huawei Technologies',
+      'exp6-meta': '04/2022-06/2022 · Shanghai, China',
+      'exp6-front-title': 'IT Business Manager',
+      'exp6-front-company': 'Huawei Technologies',
+      'exp6-front-dates': '04/2022-06/2022 · Shanghai, China',
+      'exp6-back-1': '<strong>Project Coordination & IT Management:</strong>',
+      'exp6-back-1-1': 'Coordinated cross-functional IT projects, ensuring timelines and deliverables were met.',
+      'exp6-back-1-2': 'Collaborated with stakeholders to define project requirements and KPIs.',
+      'exp6-back-1-3': 'Monitored project progress and managed risk mitigation strategies.',
+      'exp6-back-2': '<strong>System Implementation & Optimization:</strong>',
+      'exp6-back-2-1': 'Assisted in deployment of internal IT systems to streamline business operations.',
+      'exp6-back-2-2': 'Analyzed current IT processes and suggested improvements for efficiency.',
+      'exp6-back-2-3': 'Documented system configurations and user guidelines for internal teams.',
+      'exp6-back-3': '<strong>Data Analysis & Reporting:</strong>',
+      'exp6-back-3-1': 'Collected and analyzed business data to support decision-making.',
+      'exp6-back-3-2': 'Prepared reports and dashboards for management using internal BI tools.',
+      'exp6-back-4': '<strong>Stakeholder Communication & Training:</strong>',
+      'exp6-back-4-1': 'Conducted training sessions for employees on new IT systems and workflows.',
+      'exp6-back-4-2': 'Maintained clear communication between IT teams and business units.',
+
+      // 导航
+          'nav-home': 'Home',
+          'nav-about': 'Experience',
+          'nav-project': 'Project',
+          'nav-contact': 'Contact',
+          
+          // 首页
+          'hero-title': "I'm Fengcai JI",
+          'explore-btn': 'Explore my world',
+          
+          // 技能区域
+          'area-of-interest': 'Area of Interest',
+          'data-analytics': 'Data Analytics',
+          'data-analytics-desc': 'Skilled at processing and analyzing large amounts of data to uncover key insights.',
+          'data-base': 'Data Base',
+          'data-base-desc': 'Familiar with database management and query optimization to ensure data integrity.',
+          'data-visualisation': 'Data Visualisation',
+          'data-visualisation-desc': 'Able to transform data into clear visual charts for better understanding.',
+          'machine-learning': 'Machine Learning',
+          'machine-learning-desc': 'Capable of building machine learning models for predictive analysis.',
+          'big-data': 'Big Data',
+          'big-data-desc': 'Proficient in handling massive datasets and mastering big data processing techniques.',
+          'ai-research': 'AI Research',
+          'ai-research-desc': 'Passionate about artificial intelligence research and continuously exploring new methods.',
+          
+          // 经验部分
+          'experience-title': 'My Experience',
+          
+          // 技能部分
+          'skills-title': 'My Skills',
+          
+          // 项目部分
+          'project-title': 'My Projects',
+          'project-instruction': 'Click on the icons above to view corresponding projects (top three / bottom three).',
+          
+          // 联系部分
+          'contact-title': 'Contact'
+        },
+        'fr': {
+            // 项目部分
+      'project-home': 'Accueil',
+      'project-tableau': 'Tableau',
+      'project-powerbi': 'Power BI',
+      'project-python': 'Python',
+      'project-database': 'Base de données',
+      'project-web': 'Web',
+      'project-detail-btn': 'Détail',
+      'project-download-btn': 'Télécharger la démo',
+      
+      // 证书部分
+      'cert-google-analytics': 'Certificat 1 : Google Analytics',
+           // 经验部分 - 便利贴1
+      // 经验部分 - 便利贴1 (修复HTML格式)
+      'exp1-title': 'Analyste de Données et Business Intelligence',
+      'exp1-company': 'Fédération Nationale de l\'Aviation et de ses Métiers',
+      'exp1-meta': '04/2025 - 09/2025 · Paris, France',
+      'exp1-front-title': 'Analyste de Données et Business Intelligence',
+      'exp1-front-company': 'Fédération Nationale de l\'Aviation et de ses Métiers',
+      'exp1-front-dates': '04/2025 - 09/2025',
+      'exp1-front-location': 'Paris, France',
+      'exp1-back-1': '<strong>Analyses sectorielles stratégiques :</strong> suivi des changements réglementaires et politiques, évaluation des impacts sur la compétitivité de l\'industrie.',
+      'exp1-back-2': '<strong>Consolidation des insights :</strong> communication des résultats aux parties prenantes exécutives pour soutenir la prise de décision.',
+      'exp1-back-3': '<strong>Conception et mise en œuvre d\'une stratégie BI :</strong> définition du cadre stratégique et des exigences métier.',
+      'exp1-back-4': '<strong>Développement, déploiement et publication d\'un tableau de bord Tableau interactif :</strong> publication d\'un tableau de bord interactif sur le site officiel de la FNAM avec des fonctionnalités interactives avancées pour améliorer la compréhension des données et soutenir la prise de décision.',
+      'exp1-back-5': '<strong>Valorisation des données et modélisation prédictive :</strong> études prospectives et mise en œuvre de modèles statistiques et économiques pour anticiper les tendances du trafic, produisant des analyses stratégiques pour guider les décisions des membres.',
+      'exp1-back-6': '<strong>Automatisation des processus de données :</strong> création de scripts et de workflows pour assurer une collecte, un traitement et des mises à jour fiables des données.',
+      'exp1-back-7': '<strong>Promotion de la littératie des données :</strong> rédaction de guides utilisateur et animation de webinaires pour former les équipes internes et externes et les membres.',
+      
+        
+      // 经验部分 - 便利贴2
+      'exp2-title': 'Master en Management des Systèmes d\'Information, spécialisation Intelligence des Données (Big Data)',
+      'exp2-company': 'Université Grenoble Alpes/Grenoble IAE',
+      'exp2-meta': '09/2023-10/2025 · Grenoble, France',
+      'exp2-front-title': 'Master en Management des Systèmes d\'Information, spécialisation Intelligence des Données (Big Data)',
+      'exp2-front-company': 'Université Grenoble Alpes/Grenoble IAE',
+      'exp2-front-dates': '09/2023-10/2025 · Grenoble, France',
+      'exp2-back-1': '<strong>Cours principaux :</strong>',
+      'exp2-course-1': 'Data Mining & Analyse Prédictive',
+      'exp2-course-2': 'Gestion du Big Data & Cloud Computing',
+      'exp2-course-3': 'Business Intelligence & Visualisation des Données',
+      'exp2-course-4': 'Apprentissage Automatique & Applications IA',
+      'exp2-course-5': 'Stratégie des Systèmes d\'Information & Gestion de Projet',
+      'exp2-course-6': 'Conception de Bases de Données & Programmation SQL',
+      'exp2-course-7': 'Gestion de Projet Agile & Méthodologie Scrum',
+      'exp2-course-8': 'Recette & Assurance Qualité pour les Projets IT',
+      'exp2-course-9': 'Gestion des Risques & Gouvernance IT',
+      'exp2-back-2': '<strong>Compétences Développées :</strong>',
+      'exp2-skill-1': 'Analyse de jeux de données complexes et dérivation d\'insights actionnables',
+      'exp2-skill-2': 'Construction de tableaux de bord interactifs et de visualisations de données',
+      'exp2-skill-3': 'Application de modèles d\'apprentissage automatique à des problèmes métier réels',
+      'exp2-skill-4': 'Implémentation de pipelines de données et de solutions cloud',
+      'exp2-skill-5': 'Prise de décision stratégique basée sur l\'analyse quantitative',
+      'exp2-skill-6': 'Collaboration efficace dans des équipes de projet axées sur les données',
+
+      // 经验部分 - 便利贴3
+      'exp3-title': 'Analyste de Données',
+      'exp3-company': 'Logic2profit',
+      'exp3-meta': '04/2024-08/2024 · Rouen, France',
+      'exp3-front-title': 'Analyste de Données',
+      'exp3-front-company': 'Logic2profit',
+      'exp3-front-dates': '04/2024-08/2024 · Rouen, France',
+      'exp3-back-1': '<strong>Cycle de vie complet du projet BI : </strong>',
+      'exp3-back-1-1': 'analyse des besoins, modélisation des données, gestion de la qualité des données, conception et construction de l\'entrepôt de données, mise à jour et maintenance de la base de données.',
+      'exp3-back-2': '<strong>Soutien à la gestion de projet :</strong>',
+      'exp3-back-2-1': 'Assistance aux clients PME industrielles dans leur transformation numérique en intégrant, harmonisant et analysant les données de multiples systèmes (CRM, ERP, MRP).',
+      'exp3-back-2-2': 'Développement de tableaux de bord interactifs et mise en œuvre d\'indicateurs de performance BI pour améliorer les insights opérationnels.',
+      'exp3-back-2-3': 'Préparation des livrables et coordination avec les parties prenantes pour assurer l\'alignement avec les objectifs métier.',
+      'exp3-back-3': '<strong>Contribution à la gouvernance BI :</strong>',
+      'exp3-back-3-1': 'surveillance des performances du système, gestion des livraisons, analyse et résolution des anomalies de données, et mise en œuvre des développements correctifs et évolutifs pour maintenir la qualité et la cohérence des données.',
+      'exp3-back-3-2': 'Documentation des processus de données et des flux d\'amélioration pour soutenir le partage des connaissances et la standardisation des processus.',
+      
+      // 经验部分 - 便利贴4
+      'exp4-title': 'Licence en Langue et Littérature Françaises et Licence en Management des Systèmes d\'Information (Double Diplôme)',
+      'exp4-company': 'Université des Études Internationales de Shanghai',
+      'exp4-meta': '09/2019-06/2023 · Shanghai, Chine',
+      'exp4-front-title': 'Licence en Langue et Littérature Françaises et Licence en Management des Systèmes d\'Information (Double Diplôme)',
+      'exp4-front-company': 'Université des Études Internationales de Shanghai',
+      'exp4-front-dates': '09/2019-06/2023 · Shanghai, Chine',
+      'exp4-back-1': '<strong>Cours principaux :</strong>',
+      'exp4-course-1': 'Langue Française Avancée & Communication',
+      'exp4-course-2': 'Littérature Française : Classique et Moderne',
+      'exp4-course-3': 'Études Culturelles Françaises & Histoire',
+      'exp4-course-4': 'Techniques de Traduction et d\'Interprétation',
+      'exp4-course-5': 'Littérature Comparée et Linguistique',
+      'exp4-course-6': 'Introduction aux Systèmes d\'Information',
+      'exp4-course-7': 'Gestion de Bases de Données & Programmation SQL',
+      'exp4-course-8': 'Business Intelligence & Analyse de Données',
+      'exp4-course-9': 'Analyse et Conception de Systèmes',
+      'exp4-course-10': 'Gestion de Projet & Gouvernance IT',
+      'exp4-back-2': '<strong>Compétences Développées :</strong>',
+      'exp4-skill-1': 'Maîtrise avancée de la lecture, de l\'écriture et de la communication orale en français',
+      'exp4-skill-2': 'Analyse littéraire et pensée critique dans des contextes interculturels',
+      'exp4-skill-3': 'Traduction et interprétation entre le français et la langue maternelle',
+      'exp4-skill-4': 'Conception et gestion des systèmes d\'information',
+      'exp4-skill-5': 'Analyse de données et insights de business intelligence',
+      'exp4-skill-6': 'Création, interrogation et maintenance de bases de données',
+      'exp4-skill-7': 'Planification de projet et exécution de projets IT',
+      'exp4-skill-8': 'Résolution de problèmes interdisciplinaires combinant compétences linguistiques et techniques',
+      
+      // 经验部分 - 便利贴5
+      'exp5-title': 'Partenaire Métier IT',
+      'exp5-company': 'The Walt Disney Company',
+      'exp5-meta': '09/2022-09/2023 · Shanghai, Chine',
+      'exp5-front-title': 'Partenaire Métier IT',
+      'exp5-front-company': 'The Walt Disney Company',
+      'exp5-front-dates': '09/2022-09/2023 · Shanghai, Chine',
+      'exp5-back-1': '<strong>Gestion de Projet IT :</strong>',
+      'exp5-back-1-1': 'Gestion et administration des données sur l\'ERP, optimisation des flux d\'information, assurance de la qualité des données, et mise à jour et maintenance des bases de données.',
+      'exp5-back-2': '<strong>Soutien à la Gestion de Projet :</strong>',
+      'exp5-back-2-1': 'Analyse des données clients (profilage, comportement d\'achat, engagement).',
+      'exp5-back-2-2': 'Développement d\'indicateurs CRM et de tableaux de bord.',
+      'exp5-back-2-3': 'Mise en œuvre de nouveaux systèmes d\'information multi-plateformes.',
+      'exp5-back-3': '<strong>Suivi et Optimisation de Projet :</strong>',
+      'exp5-back-3-1': 'Tests, support utilisateur, suivi des performances, améliorations du système.',
+      'exp5-back-3-2': 'Documentation des processus.',
+      'exp5-back-3-3': 'Collaboration avec des partenaires IT externes.',
+      
+      // 经验部分 - 便利贴6
+      'exp6-title': 'Manager Métier IT',
+      'exp6-company': 'Huawei Technologies',
+      'exp6-meta': '04/2022-06/2022 · Shanghai, Chine',
+      'exp6-front-title': 'Manager Métier IT',
+      'exp6-front-company': 'Huawei Technologies',
+      'exp6-front-dates': '04/2022-06/2022 · Shanghai, Chine',
+      'exp6-back-1': '<strong>Coordination de Projet & Gestion IT :</strong>',
+      'exp6-back-1-1': 'Coordination de projets IT interfonctionnels, assurance du respect des délais et des livrables.',
+      'exp6-back-1-2': 'Collaboration avec les parties prenantes pour définir les exigences du projet et les KPI.',
+      'exp6-back-1-3': 'Suivi de l\'avancement du projet et gestion des stratégies d\'atténuation des risques.',
+      'exp6-back-2': '<strong>Mise en Œuvre & Optimisation des Systèmes :</strong>',
+      'exp6-back-2-1': 'Assistance au déploiement de systèmes IT internes pour rationaliser les opérations métier.',
+      'exp6-back-2-2': 'Analyse des processus IT actuels et suggestions d\'améliorations pour l\'efficacité.',
+      'exp6-back-2-3': 'Documentation des configurations système et des guides utilisateur pour les équipes internes.',
+      'exp6-back-3': '<strong>Analyse de Données & Reporting :</strong>',
+      'exp6-back-3-1': 'Collecte et analyse des données métier pour soutenir la prise de décision.',
+      'exp6-back-3-2': 'Préparation de rapports et de tableaux de bord pour la direction à l\'aide d\'outils BI internes.',
+      'exp6-back-4': '<strong>Communication avec les Parties Prenantes & Formation :</strong>',
+      'exp6-back-4-1': 'Animation de sessions de formation pour les employés sur les nouveaux systèmes IT et les workflows.',
+      'exp6-back-4-2': 'Maintien d\'une communication claire entre les équipes IT et les unités métier.',
+          // 导航
+          'nav-home': 'Accueil',
+          'nav-about': 'Experience',
+          'nav-project': 'Projet',
+          'nav-contact': 'Contact',
+          
+          
+          // 首页
+          'hero-title': "Je suis Fengcai JI",
+          'explore-btn': 'Découvrir mon univers',
+          
+          // 技能区域
+          'area-of-interest': 'Domaines d\'intérêt',
+          'data-analytics': 'Analyse de données',
+          'data-analytics-desc': 'Compétente dans le traitement et l\'analyse de grandes quantités de données pour découvrir des insights clés.',
+          'data-base': 'Base de données',
+          'data-base-desc': 'Familiarisée avec la gestion des bases de données et l\'optimisation des requêtes pour assurer l\'intégrité des données.',
+          'data-visualisation': 'Visualisation de données',
+          'data-visualisation-desc': 'Capable de transformer les données en graphiques visuels clairs pour une meilleure compréhension.',
+          'machine-learning': 'Apprentissage automatique',
+          'machine-learning-desc': 'Capable de construire des modèles d\'apprentissage automatique pour l\'analyse prédictive.',
+          'big-data': 'Big Data',
+          'big-data-desc': 'Compétente dans la manipulation de jeux de données massifs et la maîtrise des techniques de traitement du big data.',
+          'ai-research': 'Recherche en IA',
+          'ai-research-desc': 'Passionnée par la recherche en intelligence artificielle et explorant continuellement de nouvelles méthodes.',
+          
+          // 经验部分
+          'experience-title': 'Mon Expérience',
+          
+          // 技能部分
+          'skills-title': 'Mes Compétences',
+          
+          // 项目部分
+          'project-title': 'Mes Projets',
+          'project-instruction': 'Cliquez sur les icônes ci-dessus pour voir les projets correspondants (trois en haut / trois en bas).',
+          
+          // 联系部分
+          'contact-title': 'Contact'
+        }
+      };
+      
+// 更新页面文本
+  function updatePageText(lang) {
+    const elements = document.querySelectorAll('[data-translate]');
+    
+    elements.forEach(element => {
+      const key = element.getAttribute('data-translate');
+      if (translations[lang] && translations[lang][key]) {
+        element.innerHTML = translations[lang][key];
+      }
+    });
+    
+    // 更新按钮激活状态
+    langOptions.forEach(option => {
+      if (option.getAttribute('data-lang') === lang) {
+        option.classList.add('active');
+      } else {
+        option.classList.remove('active');
+      }
+    });
+  }
+  
+  // 切换语言
+  langOptions.forEach(option => {
+    option.addEventListener('click', function(e) {
+      e.preventDefault();
+      const selectedLang = this.getAttribute('data-lang');
+      if (selectedLang !== currentLang) {
+        currentLang = selectedLang;
+        updatePageText(currentLang);
+      }
+    });
+  });
+  
+  // 初始化页面文本
+  updatePageText(currentLang);
+});
+  </script>
+</body>
+</html>
