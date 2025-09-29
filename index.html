@@ -332,23 +332,81 @@
     top: -100px;
   }
   
-  /* 技能卡片优化 */
+   /* 技能卡片优化 - 均匀分布 */
   .skill-card {
     position: relative !important;
-    margin: 10px auto;
+    margin: 15px auto;
     left: auto !important;
     right: auto !important;
     top: auto !important;
     bottom: auto !important;
+    transform: none !important;
   }
   
   .skill-card img {
     width: 150px;
+    margin: 0 auto;
+    display: block;
   }
   
-  .data-analyst, .data-engineer, .business-analyst, .data-scientist {
+  /* 创建技能卡片网格布局 */
+  #home {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
     position: relative;
-    margin: 10px auto;
+  }
+  
+  /* 技能卡片容器 */
+  #home::after {
+    content: "";
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    height: 50%;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+  }
+  
+  /* 重新定位每个技能卡片 */
+  .data-analyst {
+    position: absolute !important;
+    top: 20% !important;
+    left: 10% !important;
+  }
+  
+  .data-engineer {
+    position: absolute !important;
+    top: 20% !important;
+    right: 10% !important;
+  }
+  
+  .business-analyst {
+    position: absolute !important;
+    bottom: 30% !important;
+    left: 10% !important;
+  }
+  
+  .data-scientist {
+    position: absolute !important;
+    bottom: 30% !important;
+    right: 10% !important;
+  }
+  
+  /* 确保其他内容不被覆盖 */
+  .hero-container {
+    z-index: 20;
+    position: relative;
+  }
+  
+  .hero-btn-container {
+    z-index: 20;
+    position: relative;
   }
   
   /* 3D可视化区域优化 */
@@ -3684,5 +3742,6 @@ function updateVisibleProjectButtons(lang) {
   </script>
 </body>
 </html>
+
 
 
