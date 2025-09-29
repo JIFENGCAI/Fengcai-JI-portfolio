@@ -293,6 +293,342 @@
   background-color: rgba(0,0,0,0.05);
 }
   </style>
+  <style>
+/* ====== 移动端响应式优化 ====== */
+
+@media (max-width: 768px) {
+  /* 通用调整 */
+  body, html {
+    font-size: 14px;
+    overflow-x: hidden;
+  }
+  
+  /* 导航栏优化 */
+  nav {
+    top: 10px;
+    right: 20px;
+    gap: 15px;
+    font-size: 1rem;
+  }
+  
+  .language-switcher {
+    margin-right: 10px;
+  }
+  
+  /* 首页优化 */
+  .hero-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+  
+  .hero-container h2 {
+    font-size: 1.2rem;
+    border-right: 1px solid #555;
+  }
+  
+  .hero-avatar {
+    width: 80px;
+    height: 80px;
+    top: -100px;
+  }
+  
+  /* 技能卡片优化 */
+  .skill-card {
+    position: relative !important;
+    margin: 10px auto;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+  }
+  
+  .skill-card img {
+    width: 150px;
+  }
+  
+  .data-analyst, .data-engineer, .business-analyst, .data-scientist {
+    position: relative;
+    margin: 10px auto;
+  }
+  
+  /* 3D可视化区域优化 */
+  #visualization {
+    width: 280px;
+    height: 200px;
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  /* 第二页浏览器窗口优化 */
+  .browser-frame {
+    width: 96%;
+    height: calc(100vh - 20px);
+    margin: 10px auto;
+  }
+  
+  .browser-content {
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .journey-inner {
+    width: 150px;
+    margin-bottom: 20px;
+  }
+  
+  #little-person {
+    width: 60px;
+  }
+  
+  .area-of-interest-wrapper {
+    padding-left: 0;
+    width: 100%;
+  }
+  
+  .area-of-interest {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 15px;
+  }
+  
+  .interest-item img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .interest-item p {
+    font-size: 0.8rem;
+  }
+  
+  /* 经验页优化 */
+  .notes-container {
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .note {
+    width: 160px;
+    height: 140px;
+  }
+  
+  .note-title {
+    font-size: 0.85rem;
+  }
+  
+  .note-company {
+    font-size: 0.75rem;
+  }
+  
+  .note-meta {
+    font-size: 0.7rem;
+  }
+  
+  #little-person-expr {
+    width: 70px;
+    right: 10px;
+    bottom: 10px;
+  }
+  
+  /* 技能页优化 */
+  .skills-container {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .skills-left {
+    justify-content: center;
+  }
+  
+  .skill-bubble {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .skill-bubble img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .certificates {
+    width: 100%;
+  }
+  
+  .cert-frame {
+    max-width: 100%;
+  }
+  
+  .cert-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
+  }
+  
+  .cert-btn.prev {
+    left: -10px;
+  }
+  
+  .cert-btn.next {
+    right: -10px;
+  }
+  
+  /* 项目页优化 */
+  .project-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .project-item {
+    aspect-ratio: 1 / 1;
+  }
+  
+  .icon-bar {
+    gap: 5px;
+  }
+  
+  .icon-wrap {
+    width: 80px;
+  }
+  
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .icon-btn img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .icon-label {
+    font-size: 0.7rem;
+  }
+  
+  /* 联系页优化 */
+  .contact-content {
+    gap: 20px;
+  }
+  
+  .contact-photo img {
+    max-width: 150px;
+  }
+  
+  .contact-photo.small img {
+    max-width: 120px;
+  }
+  
+  .contact-buttons {
+    gap: 15px;
+  }
+  
+  .contact-btn {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .contact-btn img {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* 超小屏幕进一步优化 */
+  body, html {
+    font-size: 12px;
+  }
+  
+  .hero-container h1 {
+    font-size: 2rem;
+  }
+  
+  .hero-container h2 {
+    font-size: 1rem;
+  }
+  
+  nav {
+    gap: 10px;
+    font-size: 0.9rem;
+    right: 15px;
+  }
+  
+  .skill-card img {
+    width: 120px;
+  }
+  
+  .area-of-interest {
+    grid-template-columns: 1fr;
+  }
+  
+  .notes-container {
+    gap: 15px;
+  }
+  
+  .note {
+    width: 140px;
+    height: 120px;
+  }
+  
+  .note-title {
+    font-size: 0.75rem;
+  }
+  
+  .note-company {
+    font-size: 0.65rem;
+  }
+  
+  .note-meta {
+    font-size: 0.6rem;
+  }
+  
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .contact-content {
+    flex-direction: column;
+  }
+  
+  .contact-photo img {
+    max-width: 180px;
+  }
+  
+  .contact-photo.small img {
+    max-width: 140px;
+  }
+}
+
+/* 防止水平滚动 */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  /* 移除仅适用于鼠标的悬停效果 */
+  .skill-card:hover img {
+    transform: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,.2);
+  }
+  
+  .skill-bubble:hover {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(100, 149, 237, 0.3);
+  }
+  
+  /* 增加触摸目标大小 */
+  nav a, .explore-btn, .contact-btn {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .lang-option {
+    padding: 10px 12px;
+  }
+}
+</style>
 </head>
 
 
@@ -3348,4 +3684,5 @@ function updateVisibleProjectButtons(lang) {
   </script>
 </body>
 </html>
+
 
